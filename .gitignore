@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+
+# Editor / tooling
+.vscode/
+.idea/
+
+# Logs / temp
+*.log
