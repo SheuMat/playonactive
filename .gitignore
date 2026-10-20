@@ -13,3 +13,6 @@ Thumbs.db
 
 # Logs / temp
 *.log
+
+# Local tooling
+.claude/

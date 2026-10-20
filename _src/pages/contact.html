@@ -1,0 +1,396 @@
+<!--meta
+{"file": "contact.html", "nav": "contact", "body": "page-contact",
+ "title": "Make an Enquiry | PlayOn Active",
+ "description": "Enquire about PlayOn Active after-school clubs, holiday camps or Saturday Club, or ask about setting up a club at your school. We reply within two working days."}
+-->
+<section class="phero phero--plain">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> / Contact</p>
+    <p class="eyebrow">Make an enquiry</p>
+    <h1>Let's get your child playing.</h1>
+    <p class="lead">Tell us about your child and what you're looking for. It takes about five minutes, and you can check everything before you send it.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:28px">
+  <div class="wrap contact">
+
+    <form class="wiz" id="enquiry" novalidate data-wizard data-endpoint="" action="#" method="post">
+      <!-- Paste your form service URL into data-endpoint (e.g. https://formspree.io/f/xxxxxx) to start receiving enquiries by email. See README.md. -->
+      <input type="hidden" name="_subject" value="New PlayOn Active enquiry" />
+      <textarea name="enquiry_summary" hidden aria-hidden="true" tabindex="-1"></textarea>
+      <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label></div>
+
+      <ol class="wiz__progress" data-progress aria-label="Form progress"></ol>
+
+      <div class="wiz__save" data-draft-note hidden>{{icon:refresh}} <span>We've restored your unfinished enquiry.</span> <button type="button" data-reset>Start again</button></div>
+
+      <!-- STEP: enquiry type -->
+      <fieldset class="wiz__step" data-step="type" data-title="Enquiry">
+        <legend>What can we help with?</legend>
+        <p class="wiz__intro">Choose everything you're interested in. The form will only ask for what's relevant.</p>
+        <fieldset class="group" data-required-group="Please choose at least one option.">
+          <legend class="sr-only" style="position:absolute;left:-9999px">Enquiry type</legend>
+          <div class="types">
+            <label class="type type--clubs"><input type="checkbox" name="enquiry_type" value="After-school club" data-token="clubs" /><span>{{icon:school}}<b>After-school club</b><small>Weekday clubs on your child's school site</small></span></label>
+            <label class="type type--camps"><input type="checkbox" name="enquiry_type" value="Holiday camp" data-token="camps" /><span>{{icon:sun}}<b>Holiday camp</b><small>Themed multi-activity days in the holidays</small></span></label>
+            <label class="type type--sat"><input type="checkbox" name="enquiry_type" value="Saturday club" data-token="saturday" /><span>{{icon:calendar}}<b>Saturday club</b><small>Weekend multi-sport sessions</small></span></label>
+            <label class="type"><input type="checkbox" name="enquiry_type" value="Club at my school (school staff)" data-token="school" /><span>{{icon:users}}<b>A club at my school</b><small>For headteachers, PE leads and school staff</small></span></label>
+            <label class="type"><input type="checkbox" name="enquiry_type" value="General question" data-token="general" /><span>{{icon:chat}}<b>General question</b><small>Anything else you'd like to ask</small></span></label>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- STEP: your details -->
+      <fieldset class="wiz__step" data-step="you" data-title="Your details" hidden>
+        <legend>About you</legend>
+        <p class="wiz__intro">So we know who to get back to, and how.</p>
+        <div class="fields">
+          <div class="field"><label for="full_name">Full name<span class="req">*</span></label><input id="full_name" name="full_name" type="text" autocomplete="name" required /></div>
+          <div class="field" data-show="parent"><label for="relationship">Relationship to the child<span class="req">*</span></label>
+            <select id="relationship" name="relationship" required><option value="">Please choose</option><option>Mum</option><option>Dad</option><option>Step-parent</option><option>Guardian</option><option>Grandparent</option><option>Other family member</option><option>Foster carer</option><option>Other</option></select></div>
+          <div class="field"><label for="email">Email address<span class="req">*</span></label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="phone">Mobile number<span class="req">*</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" required /></div>
+          <div class="field"><label for="alt_phone">Other phone number <span class="opt">(optional)</span></label><input id="alt_phone" name="alt_phone" type="tel" /></div>
+          <fieldset class="group"><legend>Best way to contact you<span class="req">*</span></legend>
+            <div class="opts">
+              <label class="opt-tile"><input type="radio" name="preferred_contact" value="Email" required /><span>Email</span></label>
+              <label class="opt-tile"><input type="radio" name="preferred_contact" value="Phone call" /><span>Phone call</span></label>
+              <label class="opt-tile"><input type="radio" name="preferred_contact" value="Text message" /><span>Text message</span></label>
+              <label class="opt-tile"><input type="radio" name="preferred_contact" value="WhatsApp" /><span>WhatsApp</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="group"><legend>Best time to reach you <span class="opt">(optional)</span></legend>
+            <div class="opts">
+              <label class="opt-tile"><input type="checkbox" name="best_time" value="Mornings" /><span>Mornings</span></label>
+              <label class="opt-tile"><input type="checkbox" name="best_time" value="Afternoons" /><span>Afternoons</span></label>
+              <label class="opt-tile"><input type="checkbox" name="best_time" value="Evenings" /><span>Evenings</span></label>
+              <label class="opt-tile"><input type="checkbox" name="best_time" value="Weekends" /><span>Weekends</span></label>
+            </div>
+          </fieldset>
+        </div>
+        <fieldset class="sub" data-show="parent">
+          <legend>{{icon:home}} Home address</legend>
+          <div class="fields">
+            <div class="field field--full"><label for="address_line1">Address line 1<span class="req">*</span></label><input id="address_line1" name="address_line1" type="text" autocomplete="address-line1" required /></div>
+            <div class="field field--full"><label for="address_line2">Address line 2 <span class="opt">(optional)</span></label><input id="address_line2" name="address_line2" type="text" autocomplete="address-line2" /></div>
+            <div class="field"><label for="town">Town or city<span class="req">*</span></label><input id="town" name="town" type="text" autocomplete="address-level2" required /></div>
+            <div class="field"><label for="postcode">Postcode<span class="req">*</span></label><input id="postcode" name="postcode" type="text" autocomplete="postal-code" data-type="postcode" required /></div>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- STEP: children -->
+      <fieldset class="wiz__step" data-step="children" data-title="Children" data-show="parent" hidden>
+        <legend>About your child</legend>
+        <p class="wiz__intro">Add each child you're enquiring for. This helps us put them in the right group.</p>
+        <div data-kids></div>
+        <button type="button" class="add-btn" data-add-kid>{{icon:plus}} Add another child</button>
+      </fieldset>
+
+      <!-- STEP: sessions -->
+      <fieldset class="wiz__step" data-step="sessions" data-title="Sessions" hidden>
+        <legend>What you're looking for</legend>
+        <p class="wiz__intro">A few details so we can come back with the right dates and options.</p>
+
+        <fieldset class="sub sub--first" data-show="clubs">
+          <legend><span class="dot dot--clubs"></span> After-school club</legend>
+          <div class="fields">
+            <div class="field field--full"><label for="clubs_school">Which school would your child attend club at?<span class="req">*</span></label><input id="clubs_school" name="clubs_school" type="text" required /><span class="hint">If we don't run a club there yet, we can talk to the school about starting one.</span></div>
+            <fieldset class="group"><legend>Preferred days <span class="opt">(choose any)</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Monday" /><span>Mon</span></label>
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Tuesday" /><span>Tue</span></label>
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Wednesday" /><span>Wed</span></label>
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Thursday" /><span>Thu</span></label>
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Friday" /><span>Fri</span></label>
+                <label class="opt-tile"><input type="checkbox" name="clubs_days" value="Any day" /><span>Any day</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>When would they like to start?<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="clubs_start" value="This term" required /><span>This term</span></label>
+                <label class="opt-tile"><input type="radio" name="clubs_start" value="Next term" /><span>Next term</span></label>
+                <label class="opt-tile"><input type="radio" name="clubs_start" value="Not sure yet" /><span>Not sure yet</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub" data-show="camps">
+          <legend><span class="dot dot--camps"></span> Holiday camp</legend>
+          <div class="fields">
+            <fieldset class="group" data-required-group="Please choose at least one holiday."><legend>Which holidays?<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="October half-term" /><span>October half-term</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="Christmas holidays" /><span>Christmas</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="February half-term" /><span>February half-term</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="Easter holidays" /><span>Easter</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="May half-term" /><span>May half-term</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_holidays" value="Summer holidays" /><span>Summer</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>How would you like to book?<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="camps_booking" value="Full week(s)" required /><span>Full week(s)</span></label>
+                <label class="opt-tile"><input type="radio" name="camps_booking" value="Individual days" /><span>Individual days</span></label>
+                <label class="opt-tile"><input type="radio" name="camps_booking" value="Not sure yet" /><span>Not sure yet</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>Days needed <span class="opt">(if booking individual days)</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="checkbox" name="camps_days" value="Monday" /><span>Mon</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_days" value="Tuesday" /><span>Tue</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_days" value="Wednesday" /><span>Wed</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_days" value="Thursday" /><span>Thu</span></label>
+                <label class="opt-tile"><input type="checkbox" name="camps_days" value="Friday" /><span>Fri</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>Wraparound care<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="camps_wraparound" value="Not needed" required /><span>Not needed</span></label>
+                <label class="opt-tile"><input type="radio" name="camps_wraparound" value="Early drop-off" /><span>Early drop-off</span></label>
+                <label class="opt-tile"><input type="radio" name="camps_wraparound" value="Late pick-up" /><span>Late pick-up</span></label>
+                <label class="opt-tile"><input type="radio" name="camps_wraparound" value="Both" /><span>Both</span></label>
+              </div>
+            </fieldset>
+            <div class="field field--full"><label for="camps_notes">Anything else about camp? <span class="opt">(optional)</span></label><textarea id="camps_notes" name="camps_notes" placeholder="e.g. specific dates, friends you'd like them grouped with"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub" data-show="saturday">
+          <legend><span class="dot dot--sat"></span> Saturday club</legend>
+          <div class="fields">
+            <fieldset class="group"><legend>When would they like to start?<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="sat_start" value="As soon as possible" required /><span>As soon as possible</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_start" value="Next month" /><span>Next month</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_start" value="Next term" /><span>Next term</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_start" value="Just finding out" /><span>Just finding out</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>How often would they come?<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="sat_frequency" value="Every week" required /><span>Every week</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_frequency" value="Most weeks" /><span>Most weeks</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_frequency" value="Now and then" /><span>Now and then</span></label>
+                <label class="opt-tile"><input type="radio" name="sat_frequency" value="Not sure yet" /><span>Not sure yet</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub" data-show="school">
+          <legend>{{icon:school}} A club at your school</legend>
+          <div class="fields">
+            <div class="field"><label for="school_name">School name<span class="req">*</span></label><input id="school_name" name="school_name" type="text" required /></div>
+            <div class="field"><label for="school_role">Your role<span class="req">*</span></label>
+              <select id="school_role" name="school_role" required><option value="">Please choose</option><option>Headteacher</option><option>Deputy or assistant head</option><option>PE or sport lead</option><option>School business manager</option><option>Teacher</option><option>Other</option></select></div>
+            <div class="field field--full"><label for="school_address">School address <span class="opt">(optional)</span></label><input id="school_address" name="school_address" type="text" /></div>
+            <div class="field"><label for="school_postcode">School postcode<span class="req">*</span></label><input id="school_postcode" name="school_postcode" type="text" data-type="postcode" required /></div>
+            <div class="field"><label for="school_pupils">Number of pupils <span class="opt">(approx.)</span></label><input id="school_pupils" name="school_pupils" type="number" min="1" inputmode="numeric" /></div>
+            <fieldset class="group" data-required-group="Please choose at least one year group."><legend>Year groups you'd like a club for<span class="req">*</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Reception" /><span>Reception</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 1" /><span>Y1</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 2" /><span>Y2</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 3" /><span>Y3</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 4" /><span>Y4</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 5" /><span>Y5</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_years" value="Year 6" /><span>Y6</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>Preferred days <span class="opt">(choose any)</span></legend>
+              <div class="opts">
+                <label class="opt-tile"><input type="checkbox" name="school_days" value="Monday" /><span>Mon</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_days" value="Tuesday" /><span>Tue</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_days" value="Wednesday" /><span>Wed</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_days" value="Thursday" /><span>Thu</span></label>
+                <label class="opt-tile"><input type="checkbox" name="school_days" value="Friday" /><span>Fri</span></label>
+              </div>
+            </fieldset>
+            <div class="field"><label for="school_start">Ideal start<span class="req">*</span></label>
+              <select id="school_start" name="school_start" required><option value="">Please choose</option><option>This term</option><option>Next term</option><option>Next academic year</option><option>Not sure yet</option></select></div>
+            <div class="field"><label for="school_funding">How would it be funded?</label>
+              <select id="school_funding" name="school_funding"><option value="">Please choose</option><option>Paid by parents</option><option>PE &amp; Sport Premium</option><option>A mix of both</option><option>Not sure yet</option></select></div>
+            <div class="field field--full"><label for="school_notes">Tell us about your school's needs <span class="opt">(optional)</span></label><textarea id="school_notes" name="school_notes" placeholder="e.g. sports you'd like covered, space available, any pupils who need extra support"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub" data-show="general">
+          <legend>{{icon:chat}} Your question</legend>
+          <div class="fields">
+            <div class="field field--full"><label for="general_question">What would you like to ask?<span class="req">*</span></label><textarea id="general_question" name="general_question" required></textarea></div>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- STEP: health & safety -->
+      <fieldset class="wiz__step" data-step="health" data-title="Health &amp; safety" data-show="parent" hidden>
+        <legend>Health, support &amp; safety</legend>
+        <div class="notice">{{icon:lock}}<span>We only use this to keep your child safe and supported. If you'd rather share medical details later, you can leave these boxes blank and we'll ask before their first session. For your privacy, these answers aren't saved in your browser.</span></div>
+        <div data-health></div>
+        <fieldset class="sub">
+          <legend>{{icon:shield}} Emergency contact</legend>
+          <p class="hint" style="margin-bottom:14px">Ideally someone other than you, in case we can't reach you.</p>
+          <div class="fields">
+            <div class="field"><label for="emergency_name">Full name<span class="req">*</span></label><input id="emergency_name" name="emergency_name" type="text" required /></div>
+            <div class="field"><label for="emergency_relationship">Relationship to the child<span class="req">*</span></label><input id="emergency_relationship" name="emergency_relationship" type="text" required /></div>
+            <div class="field"><label for="emergency_phone">Phone number<span class="req">*</span></label><input id="emergency_phone" name="emergency_phone" type="tel" required /></div>
+            <div class="field"><label for="emergency_alt_phone">Other number <span class="opt">(optional)</span></label><input id="emergency_alt_phone" name="emergency_alt_phone" type="tel" /></div>
+            <div class="field field--full"><label for="collectors">Who else is allowed to collect your child? <span class="opt">(optional)</span></label><textarea id="collectors" name="collectors" placeholder="Names and relationship, e.g. Sarah Jones (aunt)"></textarea></div>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- STEP: consents -->
+      <fieldset class="wiz__step" data-step="consent" data-title="Consents" hidden>
+        <legend>Almost there</legend>
+        <p class="wiz__intro">A few permissions and a last chance to add anything else.</p>
+        <fieldset class="sub sub--first" data-show="parent">
+          <legend>{{icon:check}} Permissions</legend>
+          <div class="fields">
+            <fieldset class="group"><legend>Photos and video<span class="req">*</span></legend>
+              <p class="hint" style="margin-bottom:10px">We sometimes take photos of sessions. We never use children's full names.</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="photo_consent" value="Yes – website and social media" required /><span>Yes, including website &amp; social media</span></label>
+                <label class="opt-tile"><input type="radio" name="photo_consent" value="Yes – internal use only" /><span>Internal use only</span></label>
+                <label class="opt-tile"><input type="radio" name="photo_consent" value="No photos" /><span>No photos</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>First aid<span class="req">*</span></legend>
+              <p class="hint" style="margin-bottom:10px">Do you consent to staff giving basic first aid if needed? We'll always contact you.</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="first_aid_consent" value="Yes" required /><span>Yes</span></label>
+                <label class="opt-tile"><input type="radio" name="first_aid_consent" value="No" /><span>No</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>Sun cream <span class="opt">(holiday camps)</span></legend>
+              <p class="hint" style="margin-bottom:10px">Can staff help your child re-apply sun cream you've provided?</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="sun_cream" value="Yes" /><span>Yes</span></label>
+                <label class="opt-tile"><input type="radio" name="sun_cream" value="No" /><span>No</span></label>
+                <label class="opt-tile"><input type="radio" name="sun_cream" value="Not applicable" /><span>Not applicable</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </fieldset>
+        <fieldset class="sub">
+          <legend>{{icon:chat}} Anything else</legend>
+          <div class="fields">
+            <div class="field"><label for="heard_about">How did you hear about us?</label>
+              <select id="heard_about" name="heard_about"><option value="">Please choose</option><option>School newsletter or letter</option><option>Facebook</option><option>Instagram</option><option>Google search</option><option>Friend or family</option><option>Flyer or poster</option><option>Saw a session</option><option>Other</option></select></div>
+            <div class="field" data-if="heard_about=Other"><label for="heard_other">Please tell us where</label><input id="heard_other" name="heard_other" type="text" /></div>
+            <div class="field field--full"><label for="message">Anything else you'd like us to know? <span class="opt">(optional)</span></label><textarea id="message" name="message"></textarea></div>
+            <label class="checkline"><input type="checkbox" name="marketing_opt_in" value="Yes" data-label="Marketing updates" /><span>Keep me updated about new camps, clubs and offers. You can unsubscribe at any time.</span></label>
+            <label class="checkline" data-show="parent"><input type="checkbox" name="info_accurate" value="Yes" required data-label="Details confirmed accurate" /><span>The information I've given is accurate, and I'm the parent or legal guardian of the child(ren) named, or have their permission to share these details.<span class="req">*</span></span></label>
+            <label class="checkline"><input type="checkbox" name="privacy_agree" value="Yes" required data-label="Privacy agreement" /><span>I agree that PlayOn Active can store and use these details to respond to my enquiry.<span class="req">*</span></span></label>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- STEP: review -->
+      <fieldset class="wiz__step" data-step="review" data-title="Review" hidden>
+        <legend>Check your enquiry</legend>
+        <p class="wiz__intro">Have a quick look through. Use <b>Edit</b> to change anything.</p>
+        <div class="review" data-review></div>
+        <div class="wiz__error" data-error hidden></div>
+      </fieldset>
+
+      <div class="wiz__nav" data-nav>
+        <button type="button" class="btn btn--ghost" data-prev hidden>{{icon:back}} Back</button>
+        <span class="wiz__count" data-count></span>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn--primary" data-next>Continue {{icon:arrow}}</button>
+        <button type="submit" class="btn btn--primary" data-submit hidden>Send enquiry {{icon:arrow}}</button>
+      </div>
+
+      <div class="wiz__done" data-done hidden tabindex="-1">
+        <div class="tick">{{icon:check}}</div>
+        <h2>Thank you! Your enquiry is with us.</h2>
+        <p>We'll be in touch within two working days using your preferred contact method. Keep an eye on your inbox (and spam folder, just in case).</p>
+        <div class="btns"><a class="btn btn--ghost" href="index.html">Back to home</a><a class="btn btn--primary" href="holiday-camps.html">Explore holiday camps</a></div>
+      </div>
+    </form>
+
+    <aside class="aside">
+      <div class="box box--navy">
+        <h3>What happens next</h3>
+        <ol>
+          <li>We read your enquiry, usually the same day.</li>
+          <li>We contact you within two working days with dates, venue and availability.</li>
+          <li>You confirm your place and your child joins in.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3>Prefer to talk?</h3>
+        <div class="line">{{icon:mail}}<a href="mailto:hello@playonactive.co.uk">hello@playonactive.co.uk</a></div>
+        <div class="line">{{icon:clock}}<span>We reply within two working days</span></div>
+      </div>
+      <div class="box">
+        <h3>Your details are safe</h3>
+        <p style="font-size:.92rem">We only use your information to respond to your enquiry and keep your child safe. We never sell or share it.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<template id="kid-tpl">
+  <div class="kid" data-kid>
+    <div class="kid__head">
+      <h3><span class="n" data-kid-n>1</span> <span data-kid-title>Child 1</span></h3>
+      <button type="button" class="link-btn" data-remove-kid>{{icon:x}} Remove</button>
+    </div>
+    <div class="fields">
+      <div class="field"><label for="child___N___first_name">First name<span class="req">*</span></label><input id="child___N___first_name" name="child___N___first_name" type="text" required data-kid-name /></div>
+      <div class="field"><label for="child___N___last_name">Surname<span class="req">*</span></label><input id="child___N___last_name" name="child___N___last_name" type="text" required /></div>
+      <div class="field"><label for="child___N___dob">Date of birth<span class="req">*</span></label><input id="child___N___dob" name="child___N___dob" type="date" required data-type="dob" /></div>
+      <div class="field"><label for="child___N___year">School year (this year)<span class="req">*</span></label>
+        <select id="child___N___year" name="child___N___year" required><option value="">Please choose</option><option>Nursery</option><option>Reception</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Year 6</option><option>Other</option></select></div>
+      <div class="field"><label for="child___N___school">School they attend<span class="req">*</span></label><input id="child___N___school" name="child___N___school" type="text" required /></div>
+      <div class="field"><label for="child___N___gender">Gender <span class="opt">(optional)</span></label>
+        <select id="child___N___gender" name="child___N___gender"><option value="">Prefer not to say</option><option>Girl</option><option>Boy</option><option>Other / self-describe</option></select></div>
+      <fieldset class="group"><legend>Experience with sport<span class="req">*</span></legend>
+        <div class="opts">
+          <label class="opt-tile"><input type="radio" name="child___N___experience" value="New to sport" required /><span>New to sport</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___experience" value="Some experience" /><span>Some experience</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___experience" value="Plays regularly" /><span>Plays regularly</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="group"><legend>Sports they enjoy or want to try <span class="opt">(optional)</span></legend>
+        <div class="opts">
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Football" /><span>Football</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Athletics" /><span>Athletics</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Gymnastics" /><span>Gymnastics</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Dodgeball" /><span>Dodgeball</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Basketball" /><span>Basketball</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Cricket / rounders" /><span>Cricket / rounders</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Tag rugby" /><span>Tag rugby</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Tennis / badminton" /><span>Tennis / badminton</span></label>
+          <label class="opt-tile"><input type="checkbox" name="child___N___sports" value="Anything!" /><span>Anything!</span></label>
+        </div>
+      </fieldset>
+      <div class="field field--full"><label for="child___N___about">Anything that helps us get to know them? <span class="opt">(optional)</span></label><textarea id="child___N___about" name="child___N___about" placeholder="e.g. a bit shy at first, loves being a team captain"></textarea></div>
+    </div>
+  </div>
+</template>
+
+<template id="health-tpl">
+  <fieldset class="sub sub--kid" data-health-kid>
+    <legend>{{icon:heart}} <span data-health-title>Child 1</span></legend>
+    <div class="fields">
+      <div class="field field--full"><label for="child___N___medical">Medical conditions <span class="opt">(e.g. asthma, epilepsy, diabetes)</span></label><textarea id="child___N___medical" name="child___N___medical" data-nosave placeholder="Leave blank if none"></textarea></div>
+      <div class="field"><label for="child___N___allergies">Allergies</label><input id="child___N___allergies" name="child___N___allergies" type="text" data-nosave placeholder="Leave blank if none" /></div>
+      <div class="field"><label for="child___N___medication">Regular medication</label><input id="child___N___medication" name="child___N___medication" type="text" data-nosave placeholder="Leave blank if none" /></div>
+      <div class="field"><label for="child___N___dietary">Dietary requirements</label><input id="child___N___dietary" name="child___N___dietary" type="text" data-nosave placeholder="e.g. vegetarian, halal" /></div>
+      <fieldset class="group"><legend>Special educational needs or disabilities (SEND)?<span class="req">*</span></legend>
+        <div class="opts">
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="No" required data-nosave /><span>No</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="Yes" data-nosave /><span>Yes</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="Prefer to discuss" data-nosave /><span>Prefer to discuss</span></label>
+        </div>
+      </fieldset>
+      <div class="field field--full" data-if="child___N___send=Yes"><label for="child___N___send_details">Tell us about their needs and what helps</label><textarea id="child___N___send_details" name="child___N___send_details" data-nosave placeholder="e.g. EHCP in place, needs instructions broken down, sensitive to loud noise"></textarea></div>
+    </div>
+  </fieldset>
+</template>

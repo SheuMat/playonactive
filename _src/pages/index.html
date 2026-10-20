@@ -1,0 +1,263 @@
+<!--meta
+{"file": "index.html", "nav": "home", "body": "page-home",
+ "title": "PlayOn Active | After-School Clubs, Holiday Camps & Saturday Club",
+ "description": "Multi-sport after-school clubs, holiday camps and a Saturday club for primary-age children. DBS-checked coaches, lots of sports and every child included."}
+-->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">After-school clubs &middot; Holiday camps &middot; Saturday club</p>
+      <h1>Get them moving. <span class="hl">Watch them grow.</span></h1>
+      <p class="hero__lead">Multi-sport sessions for primary-age children, led by friendly, DBS-checked coaches. Plenty of sports, plenty of laughs, and every child included, whatever their starting point.</p>
+      <div class="btns">
+        <a class="btn btn--primary btn--lg" href="#finder">Find the right session {{icon:arrow}}</a>
+        <a class="btn btn--ghost btn--lg" href="contact.html">Make an enquiry</a>
+      </div>
+      <ul class="hero__ticks">
+        <li>{{icon:shield}} DBS-checked coaches</li>
+        <li>{{icon:users}} Reception to Year 6</li>
+        <li>{{icon:heart}} Every ability welcome</li>
+      </ul>
+    </div>
+    <div class="collage" aria-hidden="true">
+      <figure class="ph ph--a"><img src="assets/img/children-soccer-game.jpg" alt="" width="1600" height="1067" /></figure>
+      <figure class="ph ph--b"><img src="assets/img/children-agility-balance-drills.jpg" alt="" width="1600" height="1067" /></figure>
+      <figure class="ph ph--c"><img src="assets/img/child-football-field.jpg" alt="" width="1600" height="1117" /></figure>
+      <div class="float float--1">{{icon:sparkle}} New sports to try</div>
+      <div class="float float--2">{{icon:smile}} Grouped by age</div>
+    </div>
+  </div>
+</section>
+
+<section class="finder-wrap">
+  <div class="wrap">
+    <div class="finder" id="finder" data-finder>
+      <div class="finder__head">
+        <p class="eyebrow">Session finder</p>
+        <h2>What fits your week?</h2>
+        <p>Two quick taps and we'll point you to the right session for your child.</p>
+      </div>
+      <div class="finder__qs">
+        <div>
+          <p class="finder__label" id="fq1"><span>1</span> When would they like to play?</p>
+          <div class="pickers" role="radiogroup" aria-labelledby="fq1">
+            <button type="button" class="pick pick--clubs" role="radio" aria-checked="false" data-when="clubs">{{icon:school}}<b>After school</b><small>Weekdays in term time</small></button>
+            <button type="button" class="pick pick--camps" role="radio" aria-checked="false" data-when="camps">{{icon:sun}}<b>School holidays</b><small>Full days of activity</small></button>
+            <button type="button" class="pick pick--sat" role="radio" aria-checked="false" data-when="saturday">{{icon:calendar}}<b>Saturdays</b><small>Weekend sessions</small></button>
+          </div>
+        </div>
+        <div>
+          <p class="finder__label" id="fq2"><span>2</span> Which school year are they in?</p>
+          <div class="pickers pickers--age" role="radiogroup" aria-labelledby="fq2">
+            <button type="button" class="pick pick--sm" role="radio" aria-checked="false" data-age="early">Reception &ndash; Y1</button>
+            <button type="button" class="pick pick--sm" role="radio" aria-checked="false" data-age="mid">Years 2 &ndash; 3</button>
+            <button type="button" class="pick pick--sm" role="radio" aria-checked="false" data-age="upper">Years 4 &ndash; 6</button>
+          </div>
+        </div>
+      </div>
+      <div class="finder__result" data-finder-result aria-live="polite" hidden></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">What we run</p>
+      <h2>Pick a time. We'll bring the games.</h2>
+      <p class="lead">Whether it's straight after school, through the holidays or on a Saturday, your child gets the same friendly coaching and a good mix of sports.</p>
+    </div>
+    <div class="svc reveal" data-tabs>
+      <div class="svc__tabs" role="tablist" aria-label="Our services">
+        <button class="svc__tab svc__tab--clubs" role="tab" id="t-clubs" aria-controls="p-clubs" aria-selected="true">{{icon:school}} After-School Clubs</button>
+        <button class="svc__tab svc__tab--camps" role="tab" id="t-camps" aria-controls="p-camps" aria-selected="false">{{icon:sun}} Holiday Camps</button>
+        <button class="svc__tab svc__tab--sat" role="tab" id="t-sat" aria-controls="p-sat" aria-selected="false">{{icon:calendar}} Saturday Club</button>
+      </div>
+
+      <div class="svc__panel svc__panel--clubs" role="tabpanel" id="p-clubs" aria-labelledby="t-clubs">
+        <div class="svc__img"><img src="assets/img/children-soccer-game.jpg" alt="Children in orange and pink bibs playing football together" loading="lazy" /><span class="badge">Term time</span></div>
+        <div class="svc__body">
+          <h3>After-School Clubs</h3>
+          <p>Multi-sport clubs run on your child's school site as soon as the bell goes. Each block builds real progress, with a new focus every few weeks to keep things fresh.</p>
+          <ul class="facts">
+            <li>{{icon:clock}} 45&ndash;60 minute sessions</li>
+            <li>{{icon:calendar}} 6&ndash;12 week blocks</li>
+            <li>{{icon:pin}} On the school site</li>
+            <li>{{icon:users}} Reception to Year 6</li>
+          </ul>
+          <div class="btns"><a class="btn btn--accent" href="after-school-clubs.html">Explore clubs {{icon:arrow}}</a><a class="btn btn--ghost" href="contact.html?service=clubs">Enquire</a></div>
+        </div>
+      </div>
+
+      <div class="svc__panel svc__panel--camps" role="tabpanel" id="p-camps" aria-labelledby="t-camps" hidden>
+        <div class="svc__img"><img src="assets/img/child-football-field.jpg" alt="A boy diving for the ball in goal on a sunny field" loading="lazy" /><span class="badge">School holidays</span></div>
+        <div class="svc__body">
+          <h3>Holiday Camps</h3>
+          <p>Action-packed days with a different theme each week, from Olympics to World Cup. Early drop-off and late pick-up make the holidays easier for working families.</p>
+          <ul class="facts">
+            <li>{{icon:sun}} Full days of activity</li>
+            <li>{{icon:flag}} Themed weeks</li>
+            <li>{{icon:clock}} Wraparound care</li>
+            <li>{{icon:heart}} Sibling discounts</li>
+          </ul>
+          <div class="btns"><a class="btn btn--accent" href="holiday-camps.html">Explore camps {{icon:arrow}}</a><a class="btn btn--ghost" href="contact.html?service=camps">Register interest</a></div>
+        </div>
+      </div>
+
+      <div class="svc__panel svc__panel--sat" role="tabpanel" id="p-sat" aria-labelledby="t-sat" hidden>
+        <div class="svc__img"><img src="assets/img/children-multi-sport-pe-session.jpg" alt="Children playing football on a grass pitch" loading="lazy" /><span class="badge">Weekends</span></div>
+        <div class="svc__body">
+          <h3>Saturday Club</h3>
+          <p>A weekend multi-sport club for children who can't get enough, or whose weekdays are already full. Sessions are grouped by school year so everyone plays at the right level.</p>
+          <ul class="facts">
+            <li>{{icon:calendar}} Saturday sessions</li>
+            <li>{{icon:users}} Grouped by year</li>
+            <li>{{icon:ball}} A mix of sports</li>
+            <li>{{icon:smile}} New friends from other schools</li>
+          </ul>
+          <div class="btns"><a class="btn btn--accent" href="saturday-club.html">Explore Saturday Club {{icon:arrow}}</a><a class="btn btn--ghost" href="contact.html?service=saturday">Enquire</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Sports we cover</p>
+      <h2>One club. Loads of sports.</h2>
+      <p class="lead">We rotate activities so children try a bit of everything and find the one that clicks. Tap a sport to see what they'll work on.</p>
+    </div>
+    <div class="reveal" data-tabs>
+      <div class="chips" role="tablist" aria-label="Sports">
+        <button class="chip" role="tab" id="s-fb" aria-controls="sp-fb" aria-selected="true">Football</button>
+        <button class="chip" role="tab" id="s-ath" aria-controls="sp-ath" aria-selected="false">Athletics</button>
+        <button class="chip" role="tab" id="s-gym" aria-controls="sp-gym" aria-selected="false">Gymnastics</button>
+        <button class="chip" role="tab" id="s-inv" aria-controls="sp-inv" aria-selected="false">Invasion games</button>
+        <button class="chip" role="tab" id="s-sf" aria-controls="sp-sf" aria-selected="false">Striking &amp; fielding</button>
+        <button class="chip" role="tab" id="s-net" aria-controls="sp-net" aria-selected="false">Net &amp; wall games</button>
+        <button class="chip" role="tab" id="s-dodge" aria-controls="sp-dodge" aria-selected="false">Dodgeball</button>
+        <button class="chip" role="tab" id="s-ms" aria-controls="sp-ms" aria-selected="false">Multi-skills</button>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-fb" aria-labelledby="s-fb">
+        <div class="sport__icon">{{icon:ball}}</div>
+        <div><h3>Football</h3><p>Small-sided games that get every child on the ball, not just the confident few.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Dribbling and close control</li><li>Passing to a teammate</li><li>Finding space and teamwork</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-ath" aria-labelledby="s-ath" hidden>
+        <div class="sport__icon">{{icon:bolt}}</div>
+        <div><h3>Athletics</h3><p>Running, jumping and throwing challenges where children race their own best as well as each other.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Sprinting and relay changeovers</li><li>Jumping for height and distance</li><li>Throwing technique</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-gym" aria-labelledby="s-gym" hidden>
+        <div class="sport__icon">{{icon:star}}</div>
+        <div><h3>Gymnastics</h3><p>Safe, mat-based movement that builds strength, flexibility and body control.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Balances and shapes</li><li>Rolls and safe landings</li><li>Linking moves into a sequence</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-inv" aria-labelledby="s-inv" hidden>
+        <div class="sport__icon">{{icon:target}}</div>
+        <div><h3>Invasion games</h3><p>Tag rugby, basketball, handball and more: games about getting the ball into the other team's space.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Attacking and defending</li><li>Quick decisions under pressure</li><li>Communicating as a team</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-sf" aria-labelledby="s-sf" hidden>
+        <div class="sport__icon">{{icon:sun}}</div>
+        <div><h3>Striking &amp; fielding</h3><p>Cricket and rounders-style games with plenty of hitting, catching and running between bases.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Hand-eye coordination</li><li>Catching and throwing accurately</li><li>Taking turns and fair play</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-net" aria-labelledby="s-net" hidden>
+        <div class="sport__icon">{{icon:sparkle}}</div>
+        <div><h3>Net &amp; wall games</h3><p>Short tennis, badminton and volleyball-style games, adapted so even first-timers get a rally going.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Racket and ball control</li><li>Footwork and positioning</li><li>Keeping score and playing fair</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-dodge" aria-labelledby="s-dodge" hidden>
+        <div class="sport__icon">{{icon:smile}}</div>
+        <div><h3>Dodgeball</h3><p>A firm favourite. Soft balls, simple rules and non-stop movement.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Agility and quick reactions</li><li>Throwing and catching</li><li>Team tactics</li></ul></div>
+      </div>
+      <div class="sport" role="tabpanel" id="sp-ms" aria-labelledby="s-ms" hidden>
+        <div class="sport__icon">{{icon:medal}}</div>
+        <div><h3>Multi-skills</h3><p>Fun circuits and games built around the fundamentals every sport needs.</p></div>
+        <div><h4>What they'll practise</h4><ul class="ticks"><li>Agility, balance and coordination</li><li>Running, jumping and landing</li><li>Confidence to try new things</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Why parents choose us</p>
+      <h2>Safe hands. Big smiles.</h2>
+      <p class="lead">Your child should come home tired, happy and a little more confident. Here's how we make sure that happens.</p>
+    </div>
+    <div class="grid grid-3">
+      <article class="card reveal"><div class="card__icon">{{icon:shield}}</div><h3>Checked, trained coaches</h3><p>Every coach is DBS-checked and safeguarding trained, and we're fully insured with risk assessments in place.</p></article>
+      <article class="card reveal"><div class="card__icon">{{icon:heart}}</div><h3>Every child included</h3><p>Sessions are adapted so beginners and sport-mad kids both get something out of them.</p></article>
+      <article class="card reveal"><div class="card__icon">{{icon:chart}}</div><h3>Progress you can see</h3><p>We share progress updates, so you know how your child is getting on, not just that they turned up.</p></article>
+      <article class="card reveal"><div class="card__icon">{{icon:users}}</div><h3>Grouped by age</h3><p>Activities are pitched at the right level for each age and stage.</p></article>
+      <article class="card reveal"><div class="card__icon">{{icon:bag}}</div><h3>All kit provided</h3><p>We bring the balls, cones, mats and bibs. Your child just needs trainers, a water bottle and some energy.</p></article>
+      <article class="card reveal"><div class="card__icon">{{icon:star}}</div><h3>Character, not just skills</h3><p>Teamwork, resilience and respect are built into every game we play.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">How it works</p>
+      <h2>From first message to first session</h2>
+    </div>
+    <ol class="steps" data-steps>
+      <li class="step reveal"><div class="step__n">1</div><h3>Tell us what you need</h3><p>Fill in our enquiry form. It takes about five minutes.</p></li>
+      <li class="step reveal"><div class="step__n">2</div><h3>We get back to you</h3><p>Within two working days, with dates, times, venue and how to book.</p></li>
+      <li class="step reveal"><div class="step__n">3</div><h3>Your child joins in</h3><p>A friendly coach welcomes them and helps them settle in.</p></li>
+      <li class="step reveal"><div class="step__n">4</div><h3>Watch them progress</h3><p>We keep you posted on how they're getting on.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section--navy">
+  <div class="wrap band">
+    <div class="reveal">
+      <p class="eyebrow">Our approach</p>
+      <h2>Good habits start with loving to move</h2>
+      <p style="margin:16px 0 28px">Everything we run is built on physical literacy: helping children become confident, competent and motivated movers, with the foundations for a lifetime of being active.</p>
+      <a class="btn btn--primary" href="about.html">How we coach {{icon:arrow}}</a>
+    </div>
+    <ul class="pillars reveal">
+      <li><b>Confidence</b><span>Happy to have a go</span></li>
+      <li><b>Competence</b><span>Skills that grow each week</span></li>
+      <li><b>Motivation</b><span>Wanting to come back</span></li>
+      <li><b>Knowledge</b><span>Knowing why moving matters</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Good to know</p>
+      <h2>Questions parents ask us</h2>
+    </div>
+    <div class="acc reveal" data-acc>
+      <div class="acc__item"><button class="acc__q" aria-expanded="false">What ages do you work with? <span class="pm">{{icon:plus}}</span></button><div class="acc__a"><div><p>Primary-age children from Reception to Year 6 (roughly ages 4 to 11). Groups are organised by age so activities are pitched at the right level.</p></div></div></div>
+      <div class="acc__item"><button class="acc__q" aria-expanded="false">My child isn't very sporty. Will they enjoy it? <span class="pm">{{icon:plus}}</span></button><div class="acc__a"><div><p>Yes. Our sessions are designed for every ability. We focus on fun, joining in and personal progress, so quieter or less confident children are encouraged without pressure.</p></div></div></div>
+      <div class="acc__item"><button class="acc__q" aria-expanded="false">Are your coaches checked? <span class="pm">{{icon:plus}}</span></button><div class="acc__a"><div><p>All of our coaches are DBS-checked and safeguarding trained. We hold public liability insurance and carry out risk assessments. Our safeguarding, behaviour, complaints and data protection policies are available on request.</p></div></div></div>
+      <div class="acc__item"><button class="acc__q" aria-expanded="false">What should my child bring? <span class="pm">{{icon:plus}}</span></button><div class="acc__a"><div><p>Trainers, comfortable clothes for the weather and a named water bottle. For holiday camps, add a packed lunch and snacks. We provide all the sports equipment.</p></div></div></div>
+      <div class="acc__item"><button class="acc__q" aria-expanded="false">How do I book? <span class="pm">{{icon:plus}}</span></button><div class="acc__a"><div><p>Send us an enquiry through our form. We'll come back to you within two working days to confirm availability, dates, venue and how to book.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <div>
+        <h2>Ready when they are</h2>
+        <p>Tell us a little about your child and what you're looking for. We'll do the rest.</p>
+      </div>
+      <div class="btns"><a class="btn btn--primary btn--lg" href="contact.html">Start your enquiry {{icon:arrow}}</a></div>
+    </div>
+  </div>
+</section>

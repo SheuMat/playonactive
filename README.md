@@ -1,62 +1,85 @@
-# PlayOn Active — Website
+# PlayOn Active website
 
-A fast, mobile-friendly static website for **PlayOn Active**, a multi-sport physical
-literacy provider for UK primary schools (PE curriculum & PPA cover, after-school
-clubs and holiday camps).
+Static website for PlayOn Active: multi-sport **After-School Clubs**, **Holiday Camps**
+and a **Saturday Club** for primary-age children. Plain HTML, CSS and JavaScript with
+no framework and no dependencies, so it can be hosted anywhere that serves static files.
 
 ## Pages
-| File | Purpose |
-|------|---------|
-| `index.html` | Home — overview of all three services, approach, social proof |
-| `for-schools.html` | School sales page — PE/PPA, Sport Premium, rates, how it works |
-| `after-school-clubs.html` | After-school multi-sport clubs (schools + parents) |
-| `holiday-camps.html` | Holiday camps — themed weeks, wraparound care, pricing (parents) |
-| `our-approach.html` | Physical literacy framework, the ABCs, what makes us different |
-| `contact.html` | Contact details + free-taster / enquiry form |
 
-## Brand
-- Navy `#18306C`, Orange `#FC8400` (sampled from the logo in the business documents)
-- Font: Poppins (Google Fonts)
-- Logo: `assets/img/logo.png` (+ transparent + favicon versions), extracted from
-  the supplied Word/PowerPoint files.
+| Page | File | Highlights |
+|---|---|---|
+| Home | `index.html` | Session finder, service switcher, sports explorer, how it works, FAQs |
+| After-School Clubs | `after-school-clubs.html` | "Inside a session" timeline, who it suits, schools strip |
+| Holiday Camps | `holiday-camps.html` | Flip-card themes, day-at-camp timeline, register-interest by holiday, packing checklist |
+| Saturday Club | `saturday-club.html` | Age-group tabs, why Saturdays, practical info |
+| About | `about.html` | Physical literacy explorer, the ABCs, safety & standards |
+| Contact | `contact.html` | Multi-step enquiry form (see below) |
 
-## Viewing it
-Just open `index.html` in a browser. Everything is self-contained — no build step.
-For clean local testing you can also run a tiny server from this folder:
+Each service has its own colour: clubs = orange, camps = blue, Saturday = green.
+No prices appear anywhere on the site; pricing is handled through enquiries.
+
+## Editing pages
+
+Header, footer and `<head>` are shared. **Don't edit the root `.html` files directly.**
+Edit the page bodies in `_src/pages/`, then rebuild:
 
 ```bash
-python3 -m http.server 8080
-# then visit http://localhost:8080
+python3 _build/build.py
 ```
 
-## Before going live — to do
-1. **Logo background.** `logo.png` has a white background (fine on white headers).
-   `logo-transparent.png` is provided if you want it on a coloured background.
-2. **Contact form.** The form is a front-end demo — it shows a success message but
-   does not send email yet. Connect it to your inbox via a service like
-   Formspree, Netlify Forms, or your own backend (see `assets/js/main.js`).
-3. **Real details.** Replace placeholders: phone number, exact service area,
-   social media links (Facebook/Instagram/LinkedIn in the footer), and the email
-   if it differs from `hello@playonactive.co.uk`.
-4. **Photos.** Stock placeholder photos are now in place for the main image panels
-   and documented in `IMAGES.md`. Replace them with PlayOn Active's own consented
-   session photography before launch.
-5. **Testimonials.** The homepage testimonials are clearly marked as illustrative —
-   replace with real quotes as pilot schools come on board.
-6. **Pricing.** All rates are marked "indicative" and pulled from the business
-   plan; confirm before publishing.
+Icons are written as `{{icon:name}}` in the page sources (see the `ICONS` list in
+`_build/build.py`). The build also adds a version tag to the CSS/JS links so visitors
+always get the latest styles after an update.
 
-## Structure
+## Enquiry form
+
+The form adapts to what the visitor chooses:
+
+- **Parents** (club, camp or Saturday): their details and address, each child (up to 6),
+  session preferences, health/SEND/allergies, emergency contact and authorised
+  collectors, photo/first-aid/sun cream consents, then a review screen.
+- **Schools** wanting a club: school details, year groups, days, start date and funding.
+- **General questions**: just contact details and the question.
+
+Unfinished enquiries are saved in the visitor's browser and restored when they come
+back. Medical and SEND answers are deliberately **not** saved.
+
+### Connecting it to email (to do before launch)
+
+Right now the form isn't connected to an inbox. Until it is, pressing **Send** shows
+an "email us your enquiry" screen (with the enquiry pre-filled), so nothing is lost.
+
+To connect it:
+
+1. Create a free form at a form service such as [Formspree](https://formspree.io)
+   and set it to deliver to your inbox.
+2. Copy the form's URL (e.g. `https://formspree.io/f/abcdwxyz`).
+3. In `_src/pages/contact.html`, paste it into `data-endpoint=""` on the `<form>`.
+4. Run `python3 _build/build.py`.
+
+Every answer is sent as its own field, plus a readable `enquiry_summary` field with
+the whole enquiry laid out section by section. A hidden `_gotcha` field filters spam bots.
+
+Because the form collects children's health information, publish a privacy notice
+explaining how enquiry data is stored and for how long before going live.
+
+## Previewing locally
+
+```bash
+python3 -m http.server 8910
 ```
-website/
-├── index.html
-├── for-schools.html
-├── after-school-clubs.html
-├── holiday-camps.html
-├── our-approach.html
-├── contact.html
-└── assets/
-    ├── css/styles.css
-    ├── js/main.js
-    └── img/  (logo.png, logo-transparent.png, favicon.png)
-```
+
+Then open http://localhost:8910. (If the Claude preview tool can't read the OneDrive
+folder, mirror the site to `~/dev/playonactive-preview` and serve it from there.)
+
+## Before going live
+
+1. **Connect the enquiry form** (see above) and add a privacy notice.
+2. **Email address**: `hello@playonactive.co.uk` is a placeholder used in the footer,
+   contact page and form fallback. Confirm or replace it.
+3. **Saturday Club details**: venue and session times are described as "confirmed on
+   enquiry". Add them to `_src/pages/saturday-club.html` once fixed.
+4. **Photos**: the current images are licensed stock (see `IMAGES.md`). Replace them
+   with your own consented session photos when you have them.
+5. **Social media**: no social links are shown yet. Add them to the footer in
+   `_build/build.py` once the accounts exist.
