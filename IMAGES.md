@@ -1,29 +1,24 @@
-# PlayOn Active Image Credits
+# PlayOn Active image credits
 
-These are stock placeholder images for the current website build. They are suitable for draft/commercial web use under the licences listed below, but PlayOn Active should replace them with its own consented session photography before launch wherever children are identifiable.
+The photos below are free stock images from Unsplash, used under the
+[Unsplash Licence](https://unsplash.com/license) (free for commercial use, no attribution
+required). Replace them with your own consented PlayOn Active photos when available.
 
-## Safeguarding note
+Photos with children who can be identified should only be your own if you have parental
+consent. Stock photos must not suggest the people pictured attend or endorse PlayOn Active.
 
-Photos featuring real children should only be used with appropriate parental/guardian consent and school/client approval. The current images are generic stock placeholders and must not imply that the people pictured endorse PlayOn Active.
+Which photo appears where is set in the `IMAGES` list in `_build/build.py`.
 
-## Licence references
+| File | Used for | Unsplash photo |
+|---|---|---|
+| `children-laughing-together.jpg` | Home hero, After-School Clubs feature, social share image | https://unsplash.com/photos/Ks4t8IK8Kgw |
+| `girls-drawing-together.jpg` | Home hero, About feature | https://unsplash.com/photos/N17Nkbsc-zY |
+| `children-bubbles.jpg` | Home hero, After-School Clubs banner | https://unsplash.com/photos/knfVHCT8tHY |
+| `children-playing-grass.jpg` | Saturday Club banner | https://unsplash.com/photos/0DPyb8t_KfI |
+| `child-drawing-crafts.jpg` | Saturday Club "choice and discovery", home Saturday banner | https://unsplash.com/photos/TJxotQTUr8o |
+| `children-hammock.jpg` | Saturday Club "how it works", home Saturday card | https://unsplash.com/photos/bh476ojZw2g |
+| `girl-running-laughing.jpg` | Holiday Camps banner, home camps card | https://unsplash.com/photos/xtd3zYWxEs4 |
+| `boy-watercolour-painting.jpg` | Holiday Camps feature | https://unsplash.com/photos/5uaZwt3x7nU |
+| `child-rainbow-collage.jpg` | About banner | https://unsplash.com/photos/g7dUm6lRvtQ |
 
-- Pexels Licence: https://www.pexels.com/license/
-- Unsplash Licence: https://unsplash.com/license
-
-## Image register
-
-| Local file | Used on | Source | Licence |
-|---|---|---|---|
-| `assets/img/children-soccer-game.jpg` | Home hero collage + clubs tab; After-School Clubs hero; About (inclusion) | https://images.unsplash.com/photo-1680024436315-fb06267264b2 | Unsplash Licence |
-| `assets/img/child-football-field.jpg` | Home hero collage + camps tab; Holiday Camps hero | https://images.unsplash.com/photo-1544333323-ec9ed3218dd1 | Unsplash Licence |
-| `assets/img/children-agility-balance-drills.jpg` | Home hero collage; After-School Clubs ("Great for children who…"); About hero | https://images.unsplash.com/photo-1655842556730-472e7315caa0 | Unsplash Licence |
-| `assets/img/children-multi-sport-pe-session.jpg` | Home Saturday tab; Saturday Club hero | https://images.pexels.com/photos/26283685/pexels-photo-26283685/free-photo-of-boys-playing-soccer-on-pitch.jpeg | Pexels Licence |
-| `assets/img/youth-basketball-session.jpg` | Holiday Camps packing list; Saturday Club practical info | https://images.unsplash.com/photo-1706841533842-3bbfafb7fdbc | Unsplash Licence |
-| `assets/img/children-school-gym-lineup.jpg` | About ("What we believe") | https://images.pexels.com/photos/7207552/pexels-photo-7207552.jpeg | Pexels Licence |
-
-## Optimisation notes
-
-- Images are saved as compressed JPEGs under `assets/img/`.
-- Long edge is capped at approximately 1600px.
-- WebP variants were not generated because the available local image toolchain could read WebP but not write it.
+Images are resized to a maximum of 1600px and compressed (about 110–500 KB each).

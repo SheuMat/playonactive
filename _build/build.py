@@ -38,18 +38,18 @@ BOOK_URL = "book-saturday-club.html"
 # Every photo on the site is referenced in the page sources as {{img:key}}.
 # Swap a photo here and rebuild; see IMAGES.md for sources and licences.
 IMAGES = {
-    "hero-1": "children-soccer-game.jpg",
-    "hero-2": "children-agility-balance-drills.jpg",
-    "hero-3": "child-football-field.jpg",
-    "sat-hero": "children-agility-balance-drills.jpg",
-    "sat-choice": "children-school-gym-lineup.jpg",
-    "sat-how": "children-agility-balance-drills.jpg",
-    "camps-hero": "child-football-field.jpg",
-    "camps-feature": "youth-basketball-session.jpg",
-    "clubs-hero": "children-soccer-game.jpg",
-    "clubs-feature": "children-agility-balance-drills.jpg",
-    "about-hero": "children-agility-balance-drills.jpg",
-    "about-feature": "children-school-gym-lineup.jpg",
+    "hero-1": "children-laughing-together.jpg",
+    "hero-2": "girls-drawing-together.jpg",
+    "hero-3": "children-bubbles.jpg",
+    "sat-hero": "children-playing-grass.jpg",
+    "sat-choice": "child-drawing-crafts.jpg",
+    "sat-how": "children-hammock.jpg",
+    "camps-hero": "girl-running-laughing.jpg",
+    "camps-feature": "boy-watercolour-painting.jpg",
+    "clubs-hero": "children-bubbles.jpg",
+    "clubs-feature": "children-laughing-together.jpg",
+    "about-hero": "child-rainbow-collage.jpg",
+    "about-feature": "girls-drawing-together.jpg",
 }
 
 ICONS = {
