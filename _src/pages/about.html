@@ -1,15 +1,15 @@
 <!--meta
 {"file": "about.html", "nav": "about", "body": "page-about",
  "title": "About Us | PlayOn Active",
- "description": "PlayOn Active helps primary-age children become confident, competent and motivated movers through physical literacy, with DBS-checked coaches and clear safety standards."}
+ "description": "PlayOn Active helps children develop physical literacy through play: confident, capable and motivated movers who love being active."}
 -->
 <section class="phero phero--slim">
-  <img class="phero__bg" src="assets/img/children-agility-balance-drills.jpg" alt="" />
+  <img class="phero__bg" src="{{img:about-hero}}" alt="" />
   <div class="wrap">
     <p class="crumb"><a href="index.html">Home</a> / About</p>
     <p class="eyebrow">About PlayOn Active</p>
-    <h1>We help children fall in love with moving.</h1>
-    <p class="lead">Our mission is simple: to develop confident, competent and motivated movers through high-quality physical literacy sessions for primary-age children.</p>
+    <h1>Developing physical literacy through play.</h1>
+    <p class="lead">Our mission is to help children become confident, competent and motivated movers, and to make being active something they genuinely love.</p>
   </div>
 </section>
 
@@ -17,19 +17,36 @@
   <div class="wrap split">
     <div class="reveal">
       <p class="eyebrow">What we believe</p>
-      <h2>Enjoyment first. Progress follows.</h2>
-      <p style="margin-top:16px">Children keep doing what they enjoy. So we start with fun, energy and making sure every child feels part of the group, and build real skills from there.</p>
-      <p style="margin-top:14px">Whether it's an after-school club, a holiday camp or a Saturday session, every PlayOn Active session has a clear purpose: to help children feel good about being active, now and for life.</p>
+      <h2>Play first. Progress follows.</h2>
+      <div class="prose" style="margin-top:16px">
+        <p>Children keep doing what they enjoy. So everything we run starts with play: games, movement, creativity and the freedom to try new things with friends.</p>
+        <p>Through play, children build the skills, confidence and curiosity that help them stay active for life, whether that's at Saturday Club, a holiday camp or an after-school club.</p>
+      </div>
     </div>
-    <img class="media reveal" src="assets/img/children-school-gym-lineup.jpg" alt="A group of children lined up in a school sports hall ready to start" loading="lazy" style="object-position:center 30%" />
+    <img class="media reveal" src="{{img:about-feature}}" alt="Children taking part in a group activity" loading="lazy" />
   </div>
 </section>
+
+<!-- FOUNDER SECTION: uncomment and replace the wording/photo when ready, then run python3 _build/build.py
+<section class="section section--tint" id="founder">
+  <div class="wrap split split--flip">
+    <div class="reveal">
+      <p class="eyebrow">Meet the founder</p>
+      <h2>FOUNDER NAME</h2>
+      <div class="prose" style="margin-top:16px">
+        <p>Founder wording goes here.</p>
+      </div>
+    </div>
+    <img class="media reveal" src="assets/img/founder.jpg" alt="FOUNDER NAME, founder of PlayOn Active" loading="lazy" />
+  </div>
+</section>
+-->
 
 <section class="section section--tint">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">Physical literacy</p>
-      <h2>The four things we build in every child</h2>
+      <h2>Four things we help every child build</h2>
       <p class="lead">Physical literacy is the mix of confidence, skill, motivation and understanding that keeps people active for life. Tap each one to see how it shows up.</p>
     </div>
     <div class="reveal" data-tabs>
@@ -41,23 +58,23 @@
       </div>
       <div class="sport" role="tabpanel" id="plp1" aria-labelledby="pl1">
         <div class="sport__icon">{{icon:star}}</div>
-        <div><h3>Confidence</h3><p>The self-belief to take part, have a go and not worry about getting it wrong.</p></div>
-        <div><h4>What you might notice</h4><ul class="ticks"><li>Joining in without holding back</li><li>Trying a new sport without fuss</li><li>Talking proudly about what they did</li></ul></div>
+        <div><h3>Confidence</h3><p>The self-belief to join in, have a go and not worry about getting it wrong.</p></div>
+        <div><h4>What you might notice</h4><ul class="ticks"><li>Joining in without holding back</li><li>Trying something new without fuss</li><li>Talking proudly about their day</li></ul></div>
       </div>
       <div class="sport" role="tabpanel" id="plp2" aria-labelledby="pl2" hidden>
         <div class="sport__icon">{{icon:target}}</div>
-        <div><h3>Competence</h3><p>The movement skills to take part successfully, built step by step.</p></div>
-        <div><h4>What you might notice</h4><ul class="ticks"><li>Better balance and coordination</li><li>Catching, throwing and kicking with more control</li><li>Keeping up in the playground and in PE</li></ul></div>
+        <div><h3>Competence</h3><p>Movement skills that grow through games and play.</p></div>
+        <div><h4>What you might notice</h4><ul class="ticks"><li>Better balance and coordination</li><li>More control when running, jumping and catching</li><li>Keeping up happily in the playground</li></ul></div>
       </div>
       <div class="sport" role="tabpanel" id="plp3" aria-labelledby="pl3" hidden>
         <div class="sport__icon">{{icon:bolt}}</div>
         <div><h3>Motivation</h3><p>Genuinely wanting to be active, again and again.</p></div>
-        <div><h4>What you might notice</h4><ul class="ticks"><li>Asking when the next session is</li><li>Playing the games at home</li><li>Wanting to try a new club or team</li></ul></div>
+        <div><h4>What you might notice</h4><ul class="ticks"><li>Asking when the next session is</li><li>Playing the games at home</li><li>Wanting to try new activities</li></ul></div>
       </div>
       <div class="sport" role="tabpanel" id="plp4" aria-labelledby="pl4" hidden>
         <div class="sport__icon">{{icon:sparkle}}</div>
-        <div><h3>Knowledge</h3><p>Understanding why moving matters and how to stay healthy and active.</p></div>
-        <div><h4>What you might notice</h4><ul class="ticks"><li>Knowing why we warm up and cool down</li><li>Talking about how exercise makes them feel</li><li>Making active choices on their own</li></ul></div>
+        <div><h3>Knowledge</h3><p>Understanding why moving matters and how it makes us feel.</p></div>
+        <div><h4>What you might notice</h4><ul class="ticks"><li>Talking about how being active makes them feel</li><li>Making active choices on their own</li><li>Inventing their own games</li></ul></div>
       </div>
     </div>
   </div>
@@ -67,59 +84,41 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">The building blocks</p>
-      <h2>Mastering the ABCs</h2>
-      <p class="lead">Underneath every sport are the same three skills. We weave them into every session, so whatever your child plays next comes more easily.</p>
+      <h2>Agility, balance &amp; coordination</h2>
+      <p class="lead">These three skills sit underneath every game and sport. We weave them into play, so everything children try next comes more easily.</p>
     </div>
     <ul class="abc">
       <li class="reveal"><span class="l">A</span><h3>Agility</h3><p>Changing direction and speed with control.</p></li>
-      <li class="reveal"><span class="l">B</span><h3>Balance</h3><p>Staying stable, on the move and standing still.</p></li>
+      <li class="reveal"><span class="l">B</span><h3>Balance</h3><p>Staying steady, on the move and standing still.</p></li>
       <li class="reveal"><span class="l">C</span><h3>Coordination</h3><p>Moving different parts of the body together smoothly.</p></li>
     </ul>
   </div>
 </section>
 
-<section class="section section--tint" id="standards">
+<section class="section section--tint" id="safeguarding">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="eyebrow">Safety &amp; standards</p>
-      <h2>The checks behind every session</h2>
-      <p class="lead">You're trusting us with your child. Here's what we have in place before anyone steps onto the pitch.</p>
+      <p class="eyebrow">Safeguarding</p>
+      <h2>Keeping children safe</h2>
+      <p class="lead">Children's safety and wellbeing come first in everything we do.</p>
     </div>
     <ul class="standards">
-      <li class="reveal">{{icon:shield}}<div><b>DBS-checked coaches</b><span>Every coach is checked before they work with children.</span></div></li>
-      <li class="reveal">{{icon:heart}}<div><b>Safeguarding training</b><span>All staff are trained to spot and report concerns.</span></div></li>
-      <li class="reveal">{{icon:lock}}<div><b>Fully insured</b><span>We hold public liability insurance for all our activities.</span></div></li>
-      <li class="reveal">{{icon:doc}}<div><b>Risk assessments</b><span>Every venue and activity is assessed and planned for.</span></div></li>
-      <li class="reveal">{{icon:users}}<div><b>Clear policies</b><span>Safeguarding, behaviour, complaints and data protection, available on request.</span></div></li>
-      <li class="reveal">{{icon:chart}}<div><b>Progress updates</b><span>We keep parents informed about how their child is developing.</span></div></li>
+      <li class="reveal">{{icon:shield}}<div><b>Checked staff</b><span>Everyone working with children is DBS-checked.</span></div></li>
+      <li class="reveal">{{icon:heart}}<div><b>Safeguarding training</b><span>Staff are trained to recognise and report concerns.</span></div></li>
+      <li class="reveal">{{icon:doc}}<div><b>Policies on request</b><span>Safeguarding, behaviour, complaints and data protection.</span></div></li>
     </ul>
+    <p class="center reveal" style="margin-top:24px">Questions about safeguarding or how we use your information? <a href="contact.html">Contact us</a> or read our <a href="privacy.html">privacy notice</a>.</p>
   </div>
 </section>
 
 <section class="section">
-  <div class="wrap split split--flip">
-    <div class="reveal">
-      <p class="eyebrow">Inclusion</p>
-      <h2>Every child, every ability</h2>
-      <p style="margin-top:16px">Some children arrive sport-mad. Others need a bit more encouragement. Our coaches adapt activities so everyone is challenged at the right level and nobody is left on the sidelines.</p>
-      <ul class="checks">
-        <li>{{icon:check}}<span>Activities adapted for different abilities and needs</span></li>
-        <li>{{icon:check}}<span>Recognition for effort, kindness and teamwork</span></li>
-        <li>{{icon:check}}<span>Support plans agreed with parents for additional needs</span></li>
-      </ul>
-    </div>
-    <img class="media reveal" src="assets/img/children-soccer-game.jpg" alt="Children playing football together on a dirt pitch" loading="lazy" />
-  </div>
-</section>
-
-<section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
       <div>
-        <h2>See what we're about</h2>
-        <p>The best way to understand PlayOn Active is to see your child's face after a session. Get in touch to find the right one.</p>
+        <h2>Come and play with us</h2>
+        <p>Saturday Club starts on 7 November at Southbury Primary School, Enfield.</p>
       </div>
-      <div class="btns"><a class="btn btn--primary btn--lg" href="contact.html">Make an enquiry {{icon:arrow}}</a></div>
+      <div class="btns"><a class="btn btn--primary btn--lg" href="book-saturday-club.html">Book Saturday Club {{icon:arrow}}</a></div>
     </div>
   </div>
 </section>

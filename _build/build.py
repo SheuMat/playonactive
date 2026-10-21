@@ -26,11 +26,31 @@ def asset_version(rel):
 
 NAV = [
     ("home", "index.html", "Home", ""),
-    ("clubs", "after-school-clubs.html", "After-School Clubs", "clubs"),
-    ("camps", "holiday-camps.html", "Holiday Camps", "camps"),
     ("saturday", "saturday-club.html", "Saturday Club", "sat"),
+    ("camps", "holiday-camps.html", "Holiday Camps", "camps"),
+    ("clubs", "after-school-clubs.html", "After-School Clubs", "clubs"),
     ("about", "about.html", "About", ""),
+    ("contact", "contact.html", "Contact", ""),
 ]
+
+BOOK_URL = "book-saturday-club.html"
+
+# Every photo on the site is referenced in the page sources as {{img:key}}.
+# Swap a photo here and rebuild; see IMAGES.md for sources and licences.
+IMAGES = {
+    "hero-1": "children-soccer-game.jpg",
+    "hero-2": "children-agility-balance-drills.jpg",
+    "hero-3": "child-football-field.jpg",
+    "sat-hero": "children-agility-balance-drills.jpg",
+    "sat-choice": "children-school-gym-lineup.jpg",
+    "sat-how": "children-agility-balance-drills.jpg",
+    "camps-hero": "child-football-field.jpg",
+    "camps-feature": "youth-basketball-session.jpg",
+    "clubs-hero": "children-soccer-game.jpg",
+    "clubs-feature": "children-agility-balance-drills.jpg",
+    "about-hero": "children-agility-balance-drills.jpg",
+    "about-feature": "children-school-gym-lineup.jpg",
+}
 
 ICONS = {
     "check": '<polyline points="20 6 9 17 4 12"/>',
@@ -62,6 +82,11 @@ ICONS = {
     "lock": '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
     "doc": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>',
     "refresh": '<polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/>',
+    "palette": '<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A5.6 5.6 0 0 0 22 9.8C22 5.5 17.5 2 12 2z"/>',
+    "puzzle": '<path d="M19.4 13a2.5 2.5 0 1 0 0-2H18V7a1 1 0 0 0-1-1h-4V4.6a2.5 2.5 0 1 0-2 0V6H7a1 1 0 0 0-1 1v4h1.4a2.5 2.5 0 1 1 0 2H6v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4z"/>',
+    "card": '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/>',
+    "info": '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+    "compass": '<circle cx="12" cy="12" r="9"/><polygon points="16 8 13.5 13.5 8 16 10.5 10.5 16 8"/>',
     "home": '<path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
 }
 
@@ -75,6 +100,7 @@ def icon(name):
 
 
 def head(meta):
+    robots = '\n  <meta name="robots" content="noindex" />' if meta.get("noindex") else ""
     return f"""<!DOCTYPE html>
 <html lang="en-GB" class="no-js">
 <head>
@@ -82,10 +108,10 @@ def head(meta):
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{meta['title']}</title>
   <meta name="description" content="{meta['description']}" />
-  <meta name="theme-color" content="#18306C" />
+  <meta name="theme-color" content="#18306C" />{robots}
   <meta property="og:title" content="{meta['title']}" />
   <meta property="og:description" content="{meta['description']}" />
-  <meta property="og:image" content="assets/img/children-soccer-game.jpg" />
+  <meta property="og:image" content="assets/img/{meta.get('og', 'og-image.jpg')}" />
   <link rel="icon" type="image/png" href="assets/img/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -103,8 +129,6 @@ def header(active):
         links.append(f'<a href="{href}"{cur}>{label}</a>')
         dot_html = f'<span class="dot dot--{dot}"></span>' if dot else ""
         drawer.append(f'<a href="{href}"{cur}>{dot_html}{label}</a>')
-    cur = ' aria-current="page"' if active == "contact" else ""
-    drawer.append(f'<a href="contact.html"{cur}>Contact</a>')
     return f"""<a class="skip" href="#main">Skip to content</a>
 <header class="hdr" data-hdr>
   <div class="wrap hdr__in">
@@ -113,13 +137,13 @@ def header(active):
       {' '.join(links)}
     </nav>
     <div class="hdr__cta">
-      <a class="btn btn--primary" href="contact.html">Enquire now</a>
+      <a class="btn btn--primary" href="{BOOK_URL}">Book Saturday Club</a>
       <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu" data-burger><span></span><span></span><span></span></button>
     </div>
   </div>
   <nav class="drawer" id="drawer" aria-label="Mobile" data-drawer>
     {' '.join(drawer)}
-    <a class="btn btn--primary btn--block" href="contact.html">Make an enquiry</a>
+    <a class="btn btn--primary btn--block" href="{BOOK_URL}">Book Saturday Club</a>
   </nav>
 </header>
 """
@@ -129,36 +153,37 @@ FOOTER = """<footer class="ftr">
   <div class="wrap ftr__grid">
     <div class="ftr__brand">
       <a class="ftr__logo" href="index.html"><img src="assets/img/logo.png" alt="PlayOn Active" width="150" height="62" loading="lazy" /></a>
-      <p>Multi-sport after-school clubs, holiday camps and a Saturday club for primary-age children. Friendly coaches, plenty of variety and every child included.</p>
+      <p>Get them moving. Watch them grow. Play-based Saturday Club, holiday camps and after-school clubs for primary-age children.</p>
     </div>
     <div>
-      <h2 class="ftr__h">Play with us</h2>
+      <h2 class="ftr__h">Programmes</h2>
       <ul>
-        <li><a href="after-school-clubs.html"><span class="dot dot--clubs"></span>After-School Clubs</a></li>
-        <li><a href="holiday-camps.html"><span class="dot dot--camps"></span>Holiday Camps</a></li>
         <li><a href="saturday-club.html"><span class="dot dot--sat"></span>Saturday Club</a></li>
+        <li><a href="holiday-camps.html"><span class="dot dot--camps"></span>Holiday Camps</a></li>
+        <li><a href="after-school-clubs.html"><span class="dot dot--clubs"></span>After-School Clubs</a></li>
       </ul>
     </div>
     <div>
       <h2 class="ftr__h">PlayOn Active</h2>
       <ul>
         <li><a href="about.html">About us</a></li>
-        <li><a href="about.html#standards">Safety &amp; standards</a></li>
         <li><a href="contact.html">Contact</a></li>
+        <li><a href="about.html#safeguarding">Safeguarding</a></li>
+        <li><a href="privacy.html">Privacy notice</a></li>
       </ul>
     </div>
     <div>
-      <h2 class="ftr__h">Get in touch</h2>
+      <h2 class="ftr__h">Saturday Club</h2>
       <ul>
-        <li><a href="mailto:hello@playonactive.co.uk">hello@playonactive.co.uk</a></li>
-        <li>We reply within two working days</li>
+        <li>Starts 7 November 2026</li>
+        <li>Southbury Primary School, Enfield</li>
       </ul>
-      <a class="btn btn--primary btn--sm" href="contact.html">Make an enquiry</a>
+      <a class="btn btn--primary btn--sm" href="book-saturday-club.html">Book now</a>
     </div>
   </div>
   <div class="wrap ftr__base">
     <span>&copy; <span data-year>2026</span> PlayOn Active</span>
-    <span>DBS-checked coaches &middot; Safeguarding trained &middot; Fully insured</span>
+    <span><a href="privacy.html">Privacy</a> &middot; <a href="about.html#safeguarding">Safeguarding</a></span>
   </div>
 </footer>
 """
@@ -173,8 +198,11 @@ def build():
             raise SystemExit(f"{src.name}: missing <!--meta {{...}} --> block")
         meta = json.loads(m.group(1))
         body = text[m.end():].strip("\n")
-        fab = "" if meta["nav"] == "contact" else (
-            '<a class="fab" href="contact.html" data-fab>{{icon:chat}} Enquire</a>\n'
+        fab = "" if meta.get("nofab") else (
+            f'<a class="fab" href="{BOOK_URL}" data-fab>{{{{icon:calendar}}}} Book Saturday Club</a>\n'
+        )
+        extra = "".join(
+            f'<script src="{js}?v={asset_version(js)}" defer></script>\n' for js in meta.get("scripts", [])
         )
         html = (
             head(meta)
@@ -184,9 +212,12 @@ def build():
             + "\n</main>\n"
             + FOOTER
             + fab
-            + f'<script src="assets/js/main.js?v={asset_version("assets/js/main.js")}" defer></script>\n</body>\n</html>\n'
+            + f'<script src="assets/js/main.js?v={asset_version("assets/js/main.js")}" defer></script>\n'
+            + extra
+            + "</body>\n</html>\n"
         )
         html = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda mm: icon(mm.group(1)), html)
+        html = re.sub(r"\{\{img:([a-z0-9-]+)\}\}", lambda mm: "assets/img/" + IMAGES[mm.group(1)], html)
         leftover = re.findall(r"\{\{[^}]*\}\}", html)
         if leftover:
             raise SystemExit(f"{src.name}: unknown tokens {leftover}")

@@ -1,0 +1,191 @@
+<!--meta
+{"file": "book-saturday-club.html", "nav": "saturday", "body": "svc-saturday page-booking", "nofab": true,
+ "scripts": ["assets/js/booking.js"],
+ "title": "Book Saturday Club | PlayOn Active",
+ "description": "Book PlayOn Active Saturday Club at Southbury Primary School, Enfield. £25 per Saturday or £120 for all five (7 Nov – 5 Dec 2026). Secure online payment."}
+-->
+<section class="phero phero--plain">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> / <a href="saturday-club.html">Saturday Club</a> / Book</p>
+    <p class="launch">{{icon:calendar}} 7 November &ndash; 5 December 2026</p>
+    <h1 style="margin-top:14px">Book Saturday Club</h1>
+    <p class="lead">Choose your Saturdays, tell us about your child, and pay securely online. It takes about five minutes.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:24px">
+  <div class="wrap">
+    <div class="notice notice--closed" data-closed hidden>{{icon:info}}<span><b>Online booking opens very soon.</b> We're just finishing setting up secure payments. <a href="contact.html?programme=saturday">Send us an enquiry</a> and we'll let you know as soon as you can book, or check back shortly.</span></div>
+    <div class="notice notice--test" data-testmode hidden>{{icon:info}}<span><b>Test mode:</b> payments are not real. Use Stripe's test card 4242 4242 4242 4242 with any future expiry date and any CVC.</span></div>
+    <div class="notice notice--warm" data-cancelled hidden>{{icon:info}}<span>Your payment wasn't completed, so you haven't been charged. Your details are still here: check them and try again when you're ready.</span></div>
+
+    <div class="booking" data-booking-wrap>
+      <form class="wiz" id="booking" novalidate data-booking>
+        <ol class="wiz__progress" data-progress aria-label="Booking progress"></ol>
+
+        <!-- STEP 1: Saturdays -->
+        <fieldset class="wiz__step" data-step="sessions" data-title="Saturdays">
+          <legend>Choose your Saturdays</legend>
+          <p class="wiz__intro">Every session runs 10:00am &ndash; 2:00pm at Southbury Primary School, Enfield.</p>
+          <fieldset class="group" data-required-radio="option">
+            <legend style="position:absolute;left:-9999px">Booking option</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="option" value="block" required /><span><b>All five Saturdays</b><span class="amt">&pound;120</span><small>per child &middot; 7 Nov &ndash; 5 Dec</small></span><em class="best" data-best>Best value</em></label>
+              <label class="choice"><input type="radio" name="option" value="single" /><span><b>Individual Saturdays</b><span class="amt">&pound;25</span><small>per child, per Saturday</small></span></label>
+            </div>
+          </fieldset>
+          <fieldset class="group" data-dates-group hidden data-required-group="Please choose at least one Saturday.">
+            <legend style="margin-top:22px">Which Saturdays?</legend>
+            <div class="dates" data-dates></div>
+            <p class="hint" data-block-hint hidden style="margin-top:12px">Choosing all five? The full block is cheaper, so we'll charge &pound;120 per child instead.</p>
+          </fieldset>
+        </fieldset>
+
+        <!-- STEP 2: Parent / carer -->
+        <fieldset class="wiz__step" data-step="you" data-title="Your details" hidden>
+          <legend>Parent or carer details</legend>
+          <p class="wiz__intro">We'll send your booking confirmation to this email address.</p>
+          <div class="fields">
+            <div class="field"><label for="p_name">Full name<span class="req">*</span></label><input id="p_name" name="parent.name" type="text" autocomplete="name" required /></div>
+            <div class="field"><label for="p_rel">Relationship to the child<span class="req">*</span></label>
+              <select id="p_rel" name="parent.relationship" required><option value="">Please choose</option><option>Mum</option><option>Dad</option><option>Step-parent</option><option>Guardian</option><option>Grandparent</option><option>Other family member</option><option>Foster carer</option><option>Other</option></select></div>
+            <div class="field"><label for="p_email">Email address<span class="req">*</span></label><input id="p_email" name="parent.email" type="email" autocomplete="email" required /></div>
+            <div class="field"><label for="p_phone">Mobile number<span class="req">*</span></label><input id="p_phone" name="parent.phone" type="tel" autocomplete="tel" required /></div>
+            <div class="field field--full"><label for="p_a1">Address line 1<span class="req">*</span></label><input id="p_a1" name="parent.address1" type="text" autocomplete="address-line1" required /></div>
+            <div class="field field--full"><label for="p_a2">Address line 2 <span class="opt">(optional)</span></label><input id="p_a2" name="parent.address2" type="text" autocomplete="address-line2" /></div>
+            <div class="field"><label for="p_town">Town or city<span class="req">*</span></label><input id="p_town" name="parent.town" type="text" autocomplete="address-level2" required /></div>
+            <div class="field"><label for="p_pc">Postcode<span class="req">*</span></label><input id="p_pc" name="parent.postcode" type="text" autocomplete="postal-code" data-type="postcode" required /></div>
+          </div>
+        </fieldset>
+
+        <!-- STEP 3: Children -->
+        <fieldset class="wiz__step" data-step="children" data-title="Children" hidden>
+          <legend>About your child</legend>
+          <p class="wiz__intro">Saturday Club is for School Years 1&ndash;5. Add up to four children.</p>
+          <div data-kids></div>
+          <button type="button" class="add-btn" data-add-kid>{{icon:plus}} Add another child</button>
+        </fieldset>
+
+        <!-- STEP 4: Health & emergency -->
+        <fieldset class="wiz__step" data-step="health" data-title="Health &amp; safety" hidden>
+          <legend>Health, support &amp; emergency contact</legend>
+          <div class="notice">{{icon:lock}}<span>We only use this information to keep your child safe and supported. Leave a box blank if it doesn't apply.</span></div>
+          <div data-health></div>
+          <fieldset class="sub">
+            <legend>{{icon:shield}} Emergency contact &amp; collection</legend>
+            <p class="hint" style="margin-bottom:14px">Ideally someone other than you, in case we can't reach you.</p>
+            <div class="fields">
+              <div class="field"><label for="e_name">Emergency contact name<span class="req">*</span></label><input id="e_name" name="emergency.name" type="text" required /></div>
+              <div class="field"><label for="e_rel">Relationship to the child<span class="req">*</span></label><input id="e_rel" name="emergency.relationship" type="text" required /></div>
+              <div class="field"><label for="e_phone">Phone number<span class="req">*</span></label><input id="e_phone" name="emergency.phone" type="tel" required /></div>
+              <div class="field"><label for="e_alt">Other number <span class="opt">(optional)</span></label><input id="e_alt" name="emergency.altPhone" type="tel" /></div>
+              <div class="field field--full"><label for="e_col">Who else may collect your child? <span class="opt">(optional)</span></label><textarea id="e_col" name="emergency.collectors" placeholder="Names and relationship, e.g. Sarah Jones (aunt)"></textarea></div>
+            </div>
+          </fieldset>
+        </fieldset>
+
+        <!-- STEP 5: Permissions -->
+        <fieldset class="wiz__step" data-step="consent" data-title="Permissions" hidden>
+          <legend>Permissions</legend>
+          <div class="fields">
+            <fieldset class="group"><legend>Photos and video<span class="req">*</span></legend>
+              <p class="hint" style="margin-bottom:10px">We sometimes take photos of activities. We never publish children's full names.</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="consents.photo" value="Yes – website and social media" required /><span>Yes, including website &amp; social media</span></label>
+                <label class="opt-tile"><input type="radio" name="consents.photo" value="Yes – internal use only" /><span>Internal use only</span></label>
+                <label class="opt-tile"><input type="radio" name="consents.photo" value="No photos" /><span>No photos</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="group"><legend>First aid<span class="req">*</span></legend>
+              <p class="hint" style="margin-bottom:10px">May staff give basic first aid if needed? We'll always contact you.</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="consents.firstAid" value="Yes" required /><span>Yes</span></label>
+                <label class="opt-tile"><input type="radio" name="consents.firstAid" value="No" /><span>No</span></label>
+              </div>
+            </fieldset>
+            <div class="field field--full"><label for="notes">Anything else we should know? <span class="opt">(optional)</span></label><textarea id="notes" name="notes"></textarea></div>
+            <label class="checkline"><input type="checkbox" name="consents.marketing" data-label="Marketing updates" /><span>Keep me updated about future PlayOn Active clubs and camps. You can unsubscribe at any time.</span></label>
+            <label class="checkline"><input type="checkbox" name="consents.accurate" required data-label="Details confirmed accurate" /><span>The information I've given is accurate, and I'm the parent or legal guardian of the child(ren) named.<span class="req">*</span></span></label>
+            <label class="checkline"><input type="checkbox" name="consents.terms" required data-label="Booking confirmed on payment" /><span>I understand my child's place is confirmed once payment is complete.<span class="req">*</span></span></label>
+            <label class="checkline"><input type="checkbox" name="consents.privacy" required data-label="Privacy notice agreed" /><span>I have read the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a> and agree to PlayOn Active using these details to run Saturday Club.<span class="req">*</span></span></label>
+          </div>
+        </fieldset>
+
+        <!-- STEP 6: Review & pay -->
+        <fieldset class="wiz__step" data-step="review" data-title="Review &amp; pay" hidden>
+          <legend>Check and pay</legend>
+          <p class="wiz__intro">Check your booking, then continue to our secure payment page. Use <b>Edit</b> to change anything.</p>
+          <div class="review" data-review></div>
+          <div class="form-msg form-msg--err" data-error hidden></div>
+        </fieldset>
+
+        <div class="wiz__nav" data-nav>
+          <button type="button" class="btn btn--ghost" data-prev hidden>{{icon:back}} Back</button>
+          <span class="wiz__count" data-count></span>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn--primary" data-next>Continue {{icon:arrow}}</button>
+          <button type="submit" class="btn btn--accent" data-submit hidden>{{icon:lock}} <span data-pay-label>Pay securely</span></button>
+        </div>
+      </form>
+
+      <aside class="summary">
+        <div class="summary__card">
+          <div class="summary__head"><h2>Your booking</h2><p>Saturday Club &middot; 10:00am &ndash; 2:00pm</p></div>
+          <div class="summary__body">
+            <div class="summary__row"><span>Option</span><span data-sum-option>&mdash;</span></div>
+            <div class="summary__row"><span>Saturdays</span><span data-sum-dates>&mdash;</span></div>
+            <div class="summary__row"><span>Children</span><span data-sum-kids>1</span></div>
+          </div>
+          <div class="summary__total"><span>Total</span><b data-sum-total>&pound;0</b></div>
+          <p class="summary__note" data-sum-note>&pound;25 per Saturday or &pound;120 for all five, per child.</p>
+        </div>
+        <div class="aside"><div class="box">
+          <div class="line">{{icon:pin}}<span>Southbury Primary School, Swansea Road, Enfield, EN3 4JG</span></div>
+          <div class="line">{{icon:users}}<span>School Years 1&ndash;5 (ages 6&ndash;10)</span></div>
+          <div class="line">{{icon:lock}}<span>Secure card payment by Stripe</span></div>
+          <div class="line">{{icon:chat}}<a href="contact.html?programme=saturday">Got a question? Ask us</a></div>
+        </div></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<template id="kid-tpl">
+  <div class="kid" data-kid>
+    <div class="kid__head">
+      <h3><span class="n" data-kid-n>1</span> <span data-kid-title>Child 1</span></h3>
+      <button type="button" class="link-btn" data-remove-kid>{{icon:x}} Remove</button>
+    </div>
+    <div class="fields">
+      <div class="field"><label for="child___N___first">First name<span class="req">*</span></label><input id="child___N___first" name="child___N___first" type="text" required data-kid-name /></div>
+      <div class="field"><label for="child___N___last">Surname<span class="req">*</span></label><input id="child___N___last" name="child___N___last" type="text" required /></div>
+      <div class="field"><label for="child___N___dob">Date of birth<span class="req">*</span></label><input id="child___N___dob" name="child___N___dob" type="date" required data-type="dob" /></div>
+      <div class="field"><label for="child___N___year">School year<span class="req">*</span></label>
+        <select id="child___N___year" name="child___N___year" required><option value="">Please choose</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option></select></div>
+      <div class="field"><label for="child___N___school">School they attend<span class="req">*</span></label><input id="child___N___school" name="child___N___school" type="text" required /></div>
+      <div class="field"><label for="child___N___gender">Gender <span class="opt">(optional)</span></label>
+        <select id="child___N___gender" name="child___N___gender"><option value="">Prefer not to say</option><option>Girl</option><option>Boy</option><option>Other / self-describe</option></select></div>
+      <div class="field field--full"><label for="child___N___about">Anything that helps us get to know them? <span class="opt">(optional)</span></label><textarea id="child___N___about" name="child___N___about" placeholder="e.g. loves drawing, a bit shy at first"></textarea></div>
+    </div>
+  </div>
+</template>
+
+<template id="health-tpl">
+  <fieldset class="sub sub--kid" data-health-kid>
+    <legend>{{icon:heart}} <span data-health-title>Child 1</span></legend>
+    <div class="fields">
+      <div class="field field--full"><label for="child___N___medical">Medical conditions <span class="opt">(e.g. asthma, epilepsy, diabetes)</span></label><textarea id="child___N___medical" name="child___N___medical" data-sensitive placeholder="Leave blank if none"></textarea></div>
+      <div class="field"><label for="child___N___allergies">Allergies</label><input id="child___N___allergies" name="child___N___allergies" type="text" data-sensitive placeholder="Leave blank if none" /></div>
+      <div class="field"><label for="child___N___medication">Regular medication</label><input id="child___N___medication" name="child___N___medication" type="text" data-sensitive placeholder="Leave blank if none" /></div>
+      <div class="field field--full"><label for="child___N___dietary">Dietary requirements</label><input id="child___N___dietary" name="child___N___dietary" type="text" data-sensitive placeholder="e.g. vegetarian, halal" /></div>
+      <fieldset class="group"><legend>Special educational needs or disabilities (SEND)?<span class="req">*</span></legend>
+        <div class="opts">
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="No" required data-sensitive /><span>No</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="Yes" data-sensitive /><span>Yes</span></label>
+          <label class="opt-tile"><input type="radio" name="child___N___send" value="Prefer to discuss" data-sensitive /><span>Prefer to discuss</span></label>
+        </div>
+      </fieldset>
+      <div class="field field--full" data-if="child___N___send=Yes"><label for="child___N___sendDetails">Tell us about their needs and what helps</label><textarea id="child___N___sendDetails" name="child___N___sendDetails" data-sensitive></textarea></div>
+    </div>
+  </fieldset>
+</template>
