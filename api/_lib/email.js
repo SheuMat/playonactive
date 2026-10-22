@@ -1,8 +1,13 @@
 // Sends email through Resend (https://resend.com) and builds simple branded templates.
 import { HttpError, escapeHtml } from './http.js';
 
-export const emailReady = () =>
-  Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM && process.env.EMAIL_TO);
+// Until a domain is verified in Resend, its shared test sender can still deliver to the
+// Resend account owner's own inbox, which is enough for booking and enquiry notifications.
+const DEFAULT_FROM = 'PlayOn Active <onboarding@resend.dev>';
+export const senderAddress = () => process.env.EMAIL_FROM || DEFAULT_FROM;
+export const usingTestSender = () => !process.env.EMAIL_FROM;
+
+export const emailReady = () => Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_TO);
 
 export const businessInbox = () =>
   (process.env.EMAIL_TO || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -18,7 +23,7 @@ export async function sendEmail({ to, subject, html, text, replyTo, idempotencyK
     method: 'POST',
     headers,
     body: JSON.stringify({
-      from: process.env.EMAIL_FROM,
+      from: senderAddress(),
       to: Array.isArray(to) ? to : [to],
       subject,
       html,

@@ -4,8 +4,39 @@ The booking system is built and tested. It needs three accounts connected before
 can pay. Until then, the booking page shows "Online booking opens very soon" and points
 parents to the enquiry form, so nothing breaks in the meantime.
 
-**You'll need:** a Stripe account, a Resend account, access to your Vercel project, and a
-domain name you own (for example `playonactive.co.uk`) so emails come from your address.
+## Quick start: taking bookings in about 15 minutes
+
+You don't need your own email domain to start. The minimum is:
+
+1. **Stripe** (<https://dashboard.stripe.com>): copy your **Secret key** from
+   Developers → API keys. Then in **Settings → Customer emails**, turn on
+   **Successful payments** so parents get an emailed receipt.
+2. **Resend** (<https://resend.com>): sign up **using the inbox where you want bookings to
+   arrive**, then create an **API key**.
+3. **Vercel → your project → Settings → Environment Variables**, add:
+   - `STRIPE_SECRET_KEY` = the Stripe secret key
+   - `RESEND_API_KEY` = the Resend key
+   - `EMAIL_TO` = the same email address you signed up to Resend with
+4. **Vercel → Deployments → latest → Redeploy.**
+
+Booking is then open:
+- Parents can book and pay.
+- You get each booking's full details by email.
+- Parents get their Stripe receipt and see a confirmation page.
+
+To also get **"PAID" emails**, add the Stripe webhook (step 1.4 below) and its
+`STRIPE_WEBHOOK_SECRET`. To send parents a branded **PlayOn Active confirmation**, verify
+your domain in Resend and add `EMAIL_FROM` (step 2 below).
+
+> Until a domain is verified, emails come from Resend's shared address and can only be sent
+> to your own Resend login email. That's why `EMAIL_TO` must match it.
+
+---
+
+## Full setup
+
+**You'll need:** a Stripe account, a Resend account, access to your Vercel project, and
+(for branded parent emails) a domain name you own, for example `playonactive.co.uk`.
 
 Do everything in **test mode first**, check it works, then switch to live.
 
@@ -44,7 +75,7 @@ In your Vercel project: **Settings → Environment Variables**. Add these for
 | `STRIPE_SECRET_KEY` | your Stripe secret key (`sk_test_…` while testing) |
 | `STRIPE_WEBHOOK_SECRET` | the webhook signing secret (`whsec_…`) |
 | `RESEND_API_KEY` | your Resend API key (`re_…`) |
-| `EMAIL_FROM` | e.g. `PlayOn Active <bookings@playonactive.co.uk>` (must use your verified domain) |
+| `EMAIL_FROM` | optional until your domain is verified, e.g. `PlayOn Active <bookings@playonactive.co.uk>` |
 | `EMAIL_TO` | the inbox that should receive bookings and enquiries (comma-separate several) |
 | `SITE_URL` | optional: your public address, e.g. `https://playonactive.vercel.app` |
 

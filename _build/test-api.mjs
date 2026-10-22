@@ -182,13 +182,51 @@ await test('webhook sends parent confirmation + PAID email', async () => {
   assert.equal(res.status, 200);
   const mails = emailCalls();
   assert.equal(mails.length, 2);
-  assert.deepEqual(mails[0].to, ['parent@example.com']);
-  assert.match(mails[0].subject, /confirmed \(SC-ABC234\)/);
-  assert.match(mails[0].text, /Southbury Primary School/);
-  assert.match(mails[0].text, /£240/);
-  assert.equal(mails[0].key, 'evt_1-parent');
-  assert.match(mails[1].subject, /^PAID: Saturday Club booking SC-ABC234/);
-  assert.equal(mails[1].key, 'evt_1-business');
+  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234/);
+  assert.equal(mails[0].key, 'evt_1-business');
+  assert.deepEqual(mails[1].to, ['parent@example.com']);
+  assert.match(mails[1].subject, /confirmed \(SC-ABC234\)/);
+  assert.match(mails[1].text, /Southbury Primary School/);
+  assert.match(mails[1].text, /£240/);
+  assert.equal(mails[1].key, 'evt_1-parent');
+});
+
+await test('webhook: business email first, parent email after', async () => {
+  await webhook.POST(signed(paidEvent({ id: 'cs_test_order' })));
+  const mails = emailCalls();
+  assert.match(mails[0].subject, /^PAID/);
+  assert.deepEqual(mails[1].to, ['parent@example.com']);
+});
+
+await test('without EMAIL_FROM: booking works, uses Resend test sender, skips parent email', async () => {
+  delete process.env.EMAIL_FROM;
+  const r = await (await book.GET(req('/api/book'))).json();
+  assert.equal(r.ready, true);
+  const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
+  assert.equal(res.status, 200);
+  assert.equal(emailCalls()[0].from, 'PlayOn Active <onboarding@resend.dev>');
+  calls = [];
+  const wh = await webhook.POST(signed(paidEvent()));
+  assert.equal(wh.status, 200);
+  const mails = emailCalls();
+  assert.equal(mails.length, 1);
+  assert.match(mails[0].subject, /^PAID/);
+  process.env.EMAIL_FROM = ENV.EMAIL_FROM;
+});
+
+await test('parent email failure does not fail the webhook', async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, opts) => {
+    if (String(url).includes('resend') && JSON.parse(opts.body).to[0] === 'parent@example.com') {
+      calls.push({ url: String(url), opts });
+      return new Response('{"message":"domain not verified"}', { status: 403 });
+    }
+    return realFetch(url, opts);
+  };
+  const res = await webhook.POST(signed(paidEvent()));
+  globalThis.fetch = realFetch;
+  assert.equal(res.status, 200);
+  assert.ok(emailCalls().some((m) => /^PAID/.test(m.subject)));
 });
 
 await test('webhook ignores unpaid sessions and other events', async () => {

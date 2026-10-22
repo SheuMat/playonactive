@@ -6,7 +6,7 @@
 //   checkout.session.completed and checkout.session.async_payment_succeeded
 import { handle, json, escapeHtml, HttpError } from './_lib/http.js';
 import { verifyStripeSignature } from './_lib/stripe.js';
-import { emailReady, sendEmail, businessInbox, layout, para, rowsHtml, rowsText } from './_lib/email.js';
+import { emailReady, usingTestSender, sendEmail, businessInbox, layout, para, rowsHtml, rowsText } from './_lib/email.js';
 import { CLUB, fmtDate, fmtMoney } from './_lib/saturday.js';
 
 const PAID_EVENTS = ['checkout.session.completed', 'checkout.session.async_payment_succeeded'];
@@ -52,17 +52,6 @@ export const POST = handle(async (request) => {
     para('Your payment receipt from Stripe will arrive separately.') +
     `<p style="margin:0;color:#566078;font-size:13px">Booking reference: <strong>${escapeHtml(ref)}</strong></p>`;
 
-  if (parentEmail) {
-    await sendEmail({
-      to: parentEmail,
-      replyTo: businessInbox()[0],
-      subject: `Your Saturday Club booking is confirmed (${ref})`,
-      html: layout('Your Saturday Club booking is confirmed', parentHtml),
-      text: `Thank you for booking PlayOn Active Saturday Club. Your place is confirmed.\n${rowsText(summary)}\n\nReply to this email if you have any questions.`,
-      idempotencyKey: `${event.id}-parent`,
-    });
-  }
-
   const bizRows = [
     ...summary,
     { heading: 'Parent' },
@@ -79,6 +68,23 @@ export const POST = handle(async (request) => {
     text: `Payment received for ${ref}.\n${rowsText(bizRows)}`,
     idempotencyKey: `${event.id}-business`,
   });
+
+  // Parent confirmation is best-effort: if it can't be sent (for example the email
+  // domain isn't verified yet), the booking still stands and Stripe's receipt covers it.
+  if (parentEmail && !usingTestSender()) {
+    try {
+      await sendEmail({
+        to: parentEmail,
+        replyTo: businessInbox()[0],
+        subject: `Your Saturday Club booking is confirmed (${ref})`,
+        html: layout('Your Saturday Club booking is confirmed', parentHtml),
+        text: `Thank you for booking PlayOn Active Saturday Club. Your place is confirmed.\n${rowsText(summary)}\n\nReply to this email if you have any questions.`,
+        idempotencyKey: `${event.id}-parent`,
+      });
+    } catch (err) {
+      console.error('Parent confirmation email failed', ref, err.message);
+    }
+  }
 
   return json({ received: true });
 });
