@@ -21,12 +21,16 @@ export const POST = handle(async (request) => {
 
   const s = event.data.object;
   const m = s.metadata || {};
-  if (m.type !== 'saturday_club' || s.payment_status !== 'paid') return json({ received: true });
+  // Bookings come either from our own Checkout session (metadata.type) or from a
+  // Payment Link opened with client_reference_id=SC-XXXXXX.
+  const fromLink = /^SC-[A-Z0-9]{6}(-\d+)?$/.test(s.client_reference_id || '');
+  if ((m.type !== 'saturday_club' && !fromLink) || s.payment_status !== 'paid') return json({ received: true });
 
   // Returning an error makes Stripe retry later (e.g. once email is configured).
   if (!emailReady()) throw new HttpError(500, 'Email not configured');
 
   const ref = m.booking_ref || s.client_reference_id;
+  const parentName = m.parent_name || (s.customer_details && s.customer_details.name) || '';
   const parentEmail = (s.customer_details && s.customer_details.email) || s.customer_email;
   const dates = (m.dates || '').split(',').filter(Boolean);
   const total = fmtMoney(s.amount_total || 0);
@@ -35,16 +39,18 @@ export const POST = handle(async (request) => {
   const summary = [
     { heading: 'Your booking' },
     { label: 'Booking reference', value: ref },
-    { label: 'Booked', value: option },
-    { label: 'Saturdays', value: dates.map(fmtDate).join('\n') },
-    { label: 'Children', value: (m.children || '').split('; ').join('\n') },
+    ...(fromLink && !m.type ? [] : [
+      { label: 'Booked', value: option },
+      { label: 'Saturdays', value: dates.map(fmtDate).join('\n') },
+      { label: 'Children', value: (m.children || '').split('; ').join('\n') },
+    ]),
     { label: 'Time', value: CLUB.time },
     { label: 'Location', value: CLUB.location },
     { label: 'Amount paid', value: total },
   ];
 
   const parentHtml =
-    para(`Hi ${m.parent_name || 'there'},`) +
+    para(`Hi ${parentName || 'there'},`) +
     para('Thank you for booking PlayOn Active Saturday Club. Your place is confirmed and we can’t wait to see you!') +
     rowsHtml(summary) +
     '<div style="height:18px"></div>' +
@@ -55,7 +61,7 @@ export const POST = handle(async (request) => {
   const bizRows = [
     ...summary,
     { heading: 'Parent' },
-    { label: 'Name', value: m.parent_name },
+    { label: 'Name', value: parentName },
     { label: 'Email', value: parentEmail },
     { label: 'Phone', value: m.parent_phone },
     { label: 'Stripe payment', value: s.payment_intent || s.id },
@@ -64,7 +70,7 @@ export const POST = handle(async (request) => {
     to: businessInbox(),
     replyTo: parentEmail || undefined,
     subject: `PAID: Saturday Club booking ${ref} – ${total}`,
-    html: layout(`Booking ${ref} is paid`, para('Payment has been received. Full child, health and permission details are in the earlier "awaiting payment" email with the same reference.') + rowsHtml(bizRows)),
+    html: layout(`Booking ${ref} is paid`, para('Payment has been received. Full child, health and permission details are in the earlier "awaiting payment" email with the same reference (ignore any "-1", "-2" ending).') + rowsHtml(bizRows)),
     text: `Payment received for ${ref}.\n${rowsText(bizRows)}`,
     idempotencyKey: `${event.id}-business`,
   });

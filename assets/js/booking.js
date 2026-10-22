@@ -418,6 +418,7 @@
 
   /* ---------- Drafts: general details in localStorage, health details only for this tab ---------- */
   let saveTimer = null;
+  let draftsOn = true;
   const snapshot = (sensitive) => {
     const fields = {};
     $$('input, select, textarea', form).forEach((el) => {
@@ -434,6 +435,7 @@
     return fields;
   };
   const saveDraft = () => {
+    if (!draftsOn) return;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       local.set(LOCAL_KEY, { saved: Date.now(), kids: kidBlocks().length, fields: snapshot(false) });
@@ -522,6 +524,60 @@
     errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
+  // Payment Link mode: one button per payment (or one payment with a quantity to set).
+  const showPayments = (data) => {
+    const money = (p) => '£' + (p / 100).toFixed(p % 100 ? 2 : 0);
+    const box = document.createElement('div');
+    box.className = 'paybox';
+    box.tabIndex = -1;
+    const h = document.createElement('h3');
+    h.textContent = 'Last step: pay to confirm your place';
+    const intro = document.createElement('p');
+    intro.append('We’ve received your details. Your booking reference is ');
+    const b = document.createElement('b');
+    b.textContent = data.ref;
+    intro.append(b, `. Your place is confirmed once ${money(data.total)} has been paid.`);
+    box.append(h, intro);
+    const single = data.payments.length === 1;
+    const tip = document.createElement('p');
+    tip.className = 'notice notice--warm';
+    tip.textContent = single
+      ? `On the payment page, please set the quantity to ${data.payments[0].quantity} so the total is ${money(data.total)}.`
+      : `Please complete all ${data.payments.length} payments below. Each one opens Stripe’s secure payment page in a new tab.`;
+    box.appendChild(tip);
+    const list = document.createElement('div');
+    list.className = 'paybox__list';
+    data.payments.forEach((p, i) => {
+      const a = document.createElement('a');
+      a.className = 'btn btn--accent paybox__btn';
+      a.href = p.url;
+      if (!single) { a.target = '_blank'; a.rel = 'noopener'; }
+      a.textContent = single ? `Pay ${money(p.amount)} securely` : `Payment ${i + 1} of ${data.payments.length}: ${money(p.amount)} · ${p.label}`;
+      a.addEventListener('click', () => {
+        if (single) return;
+        a.classList.add('is-done');
+        a.textContent = `✓ Opened: ${money(p.amount)} · ${p.label}`;
+      });
+      list.appendChild(a);
+    });
+    box.appendChild(list);
+    const help = document.createElement('p');
+    help.className = 'hint';
+    help.style.marginTop = '14px';
+    help.append('Problem paying? ');
+    const c = document.createElement('a');
+    c.href = 'contact.html?programme=saturday';
+    c.textContent = 'Contact us';
+    help.append(c, ` and quote ${data.ref}.`);
+    box.appendChild(help);
+    $('[data-nav]', form).hidden = true;
+    $('[data-review]', form).replaceWith(box);
+    $('.wiz__intro', steps[steps.length - 1]).hidden = true;
+    progress.hidden = true;
+    box.focus({ preventScroll: true });
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     for (let i = 0; i < steps.length - 1; i++) {
@@ -534,6 +590,20 @@
     try {
       const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload()) });
       const data = await res.json().catch(() => ({}));
+      if (res.ok && data.mode === 'links' && Array.isArray(data.payments)) {
+        clearTimeout(saveTimer);
+        draftsOn = false;
+        local.del(LOCAL_KEY);
+        session.del(SESSION_KEY);
+        const only = data.payments.length === 1 && data.payments[0].quantity === 1;
+        if (only) {
+          redirecting = true;
+          window.location.href = data.payments[0].url;
+          return;
+        }
+        showPayments(data);
+        return;
+      }
       if (res.ok && data.url) {
         redirecting = true;
         window.location.href = data.url;
@@ -564,6 +634,16 @@
       if (!isLocal) { $('[data-booking-wrap]').hidden = true; return; }
     }
     renderDates();
+    if (status && status.options) {
+      ['block', 'single'].forEach((key) => {
+        if (status.options[key]) return;
+        const input = $(`input[name="option"][value="${key}"]`, form);
+        input.disabled = true;
+        input.checked = false;
+        const small = $('small', input.nextElementSibling);
+        if (small) small.textContent = 'Not available online yet. Please contact us.';
+      });
+    }
     addKid(false);
     const restored = restoreDraft();
     syncHealth();

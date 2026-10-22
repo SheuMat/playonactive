@@ -251,6 +251,75 @@ await test('booking status returns a safe summary', async () => {
   assert.deepEqual(r.children, ['Amara', 'Leo']);
 });
 
+await test('payment links mode: ready without a Stripe secret key', async () => {
+  delete process.env.STRIPE_SECRET_KEY;
+  const r = await (await book.GET(req('/api/book'))).json();
+  assert.equal(r.ready, true);
+  assert.equal(r.mode, 'links');
+  assert.deepEqual(r.options, { block: true, single: false });
+});
+
+await test('payment links: one child, block -> straight to the £120 link', async () => {
+  const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
+  assert.equal(res.status, 200);
+  const r = await res.json();
+  assert.equal(r.mode, 'links');
+  assert.equal(r.payments.length, 1);
+  const u = new URL(r.payments[0].url);
+  assert.equal(u.origin + u.pathname, 'https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01');
+  assert.equal(u.searchParams.get('prefilled_email'), 'parent@example.com');
+  assert.equal(u.searchParams.get('client_reference_id'), r.ref);
+  assert.equal(stripeCalls().length, 0);
+  assert.match(emailCalls()[0].text, /Expected payment\(s\): Amara – all five Saturdays: £120/);
+});
+
+await test('payment links: two children -> two payments with -1/-2 references', async () => {
+  const b = validBooking();
+  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
+  const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
+  assert.equal(r.payments.length, 2);
+  assert.equal(r.total, 24000);
+  assert.ok(r.payments[1].url.endsWith(`client_reference_id=${r.ref}-2`));
+  assert.match(r.payments[1].label, /^Leo/);
+});
+
+await test('payment links: adjustable quantity -> one payment, quantity 2', async () => {
+  process.env.STRIPE_LINKS_ADJUSTABLE = 'true';
+  const b = validBooking();
+  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
+  const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
+  assert.equal(r.payments.length, 1);
+  assert.equal(r.payments[0].quantity, 2);
+  assert.equal(r.payments[0].amount, 24000);
+  delete process.env.STRIPE_LINKS_ADJUSTABLE;
+});
+
+await test('payment links: individual Saturdays blocked until a £25 link is set', async () => {
+  const body = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-21'] });
+  const res = await book.POST(req('/api/book', { method: 'POST', body }));
+  assert.equal(res.status, 422);
+  assert.equal(emailCalls().length, 0);
+  process.env.STRIPE_LINK_SINGLE = 'https://buy.stripe.com/test_single';
+  const ok = await (await book.POST(req('/api/book', { method: 'POST', body }))).json();
+  assert.equal(ok.payments.length, 2);
+  assert.match(ok.payments[0].url, /^https:\/\/buy\.stripe\.com\/test_single\?/);
+  assert.equal(ok.total, 5000);
+  delete process.env.STRIPE_LINK_SINGLE;
+  process.env.STRIPE_SECRET_KEY = ENV.STRIPE_SECRET_KEY;
+});
+
+await test('webhook: payment link session (no metadata) sends PAID email', async () => {
+  const ev = paidEvent({ metadata: {}, client_reference_id: 'SC-ABC234-2', amount_total: 12000, customer_details: { email: 'parent@example.com', name: 'Pat Parent' } });
+  const res = await webhook.POST(signed(ev));
+  assert.equal(res.status, 200);
+  const mails = emailCalls();
+  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234-2 – £120/);
+  assert.match(mails[1].text, /SC-ABC234-2/);
+  calls = [];
+  await webhook.POST(signed(paidEvent({ metadata: {}, client_reference_id: 'something-else' })));
+  assert.equal(emailCalls().length, 0);
+});
+
 await test('enquiry: honeypot is silently ignored', async () => {
   const res = await enquiry.POST(req('/api/enquiry', { method: 'POST', body: { website: 'spam', name: 'x' } }));
   assert.equal(res.status, 200);

@@ -32,3 +32,16 @@ export const fmtShort = (date) =>
   });
 
 export const fmtMoney = (pence) => '£' + (pence % 100 ? (pence / 100).toFixed(2) : String(pence / 100));
+
+// Stripe Payment Links, used when no STRIPE_SECRET_KEY is set.
+// Each link charges a fixed unit price (£120 block / £25 single Saturday).
+// Set STRIPE_LINKS_ADJUSTABLE=true once "Let customers adjust quantity" is switched on
+// for the links in Stripe; parents then make one payment instead of one per place.
+const LINKS = {
+  block: 'https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01',
+  single: '', // add the £25 link here when confirmed
+};
+export const paymentLink = (option) => ({
+  url: (option === 'block' ? process.env.STRIPE_LINK_BLOCK : process.env.STRIPE_LINK_SINGLE) || LINKS[option] || '',
+  adjustable: process.env.STRIPE_LINKS_ADJUSTABLE === 'true',
+});

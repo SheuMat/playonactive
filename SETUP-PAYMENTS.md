@@ -4,7 +4,36 @@ The booking system is built and tested. It needs three accounts connected before
 can pay. Until then, the booking page shows "Online booking opens very soon" and points
 parents to the enquiry form, so nothing breaks in the meantime.
 
-## Quick start: taking bookings in about 15 minutes
+## Current setup: Stripe Payment Links
+
+The site is set up to use your Stripe **Payment Links**, so no Stripe secret key is needed:
+
+- **All five Saturdays (£120):** `https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01`
+- **Single Saturday (£25):** not yet added. Paste the correct link into `LINKS.single` in
+  `api/_lib/saturday.js` (or set `STRIPE_LINK_SINGLE` in Vercel). Until then, "Individual
+  Saturdays" shows as not available online.
+
+How it works:
+
+1. The parent fills in the booking form.
+2. You receive an email with every detail and the booking reference (e.g. `SC-7K3PQX`).
+3. The parent is sent to the payment link, with their email and the reference filled in.
+4. In Stripe, each payment shows the reference as its **Client reference ID**.
+
+Your links charge **one place per payment**. Booking two children means two payments, so the
+site shows one "Pay" button per child, each with its own reference (`SC-7K3PQX-1`,
+`SC-7K3PQX-2`). To let parents pay for everything at once instead, edit each link in
+Stripe, turn on **Let customers adjust quantity**, and add `STRIPE_LINKS_ADJUSTABLE=true` in Vercel.
+
+**Recommended:** in each payment link's settings, under **After payment**, choose
+**Don't show confirmation page → Redirect customers to your website** and enter
+`https://playonactive.vercel.app/booking-confirmed`.
+
+**Vercel environment variables needed for payment links:** `RESEND_API_KEY`, `EMAIL_TO` and
+`EMAIL_FROM` (see the Resend section). No `STRIPE_SECRET_KEY` is needed. Adding one later
+switches the site to automatic Stripe Checkout with exact totals.
+
+## Quick start (automatic Stripe Checkout instead of payment links)
 
 You don't need your own email domain to start. The minimum is:
 
