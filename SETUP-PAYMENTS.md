@@ -8,10 +8,14 @@ parents to the enquiry form, so nothing breaks in the meantime.
 
 The site is set up to use your Stripe **Payment Links**, so no Stripe secret key is needed:
 
-- **All five Saturdays (£120):** `https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01`
-- **Single Saturday (£25):** not yet added. Paste the correct link into `LINKS.single` in
-  `api/_lib/saturday.js` (or set `STRIPE_LINK_SINGLE` in Vercel). Until then, "Individual
-  Saturdays" shows as not available online.
+- **All five Saturdays (£110):** `https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01`. Fixed quantity, so
+  families booking several children get one payment button per child.
+- **Single Saturday (£25):** `https://buy.stripe.com/5kQcN480dfpG9IO7my3wQ03`. Quantity can be
+  changed on Stripe's page, so a family pays for all their Saturdays and children in one go;
+  the site tells them which quantity to choose.
+
+Links and prices live in `api/_lib/saturday.js` (charging rules and links) and at the top of
+`assets/js/booking.js` (what parents see). If you change a price in Stripe, change both.
 
 How it works:
 
@@ -20,10 +24,8 @@ How it works:
 3. The parent is sent to the payment link, with their email and the reference filled in.
 4. In Stripe, each payment shows the reference as its **Client reference ID**.
 
-Your links charge **one place per payment**. Booking two children means two payments, so the
-site shows one "Pay" button per child, each with its own reference (`SC-7K3PQX-1`,
-`SC-7K3PQX-2`). To let parents pay for everything at once instead, edit each link in
-Stripe, turn on **Let customers adjust quantity**, and add `STRIPE_LINKS_ADJUSTABLE=true` in Vercel.
+If you turn on **Let customers adjust quantity** for the £110 link in Stripe, tell us (or set
+`adjustable: true` for it in `api/_lib/saturday.js`) so families pay for all children at once.
 
 **Recommended:** in each payment link's settings, under **After payment**, choose
 **Don't show confirmation page → Redirect customers to your website** and enter

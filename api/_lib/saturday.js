@@ -8,7 +8,7 @@ export const CLUB = {
   ages: 'School Years 1–5 (ages 6–10)',
   currency: 'gbp',
   sessionPrice: 2500, // pence
-  blockPrice: 12000, // pence, all five Saturdays
+  blockPrice: 11000, // pence, all five Saturdays
   dates: ['2026-11-07', '2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
   years: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
   maxChildren: 4,
@@ -34,14 +34,19 @@ export const fmtShort = (date) =>
 export const fmtMoney = (pence) => '£' + (pence % 100 ? (pence / 100).toFixed(2) : String(pence / 100));
 
 // Stripe Payment Links, used when no STRIPE_SECRET_KEY is set.
-// Each link charges a fixed unit price (£120 block / £25 single Saturday).
-// Set STRIPE_LINKS_ADJUSTABLE=true once "Let customers adjust quantity" is switched on
-// for the links in Stripe; parents then make one payment instead of one per place.
+// adjustable = the link lets customers change the quantity on Stripe's page, so a family
+// pays for several places in one go; otherwise the site shows one payment per place.
+// STRIPE_LINK_BLOCK / STRIPE_LINK_SINGLE / STRIPE_LINKS_ADJUSTABLE in Vercel override these.
 const LINKS = {
-  block: 'https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01',
-  single: '', // add the £25 link here when confirmed
+  block: { url: 'https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01', adjustable: false }, // £110, all five Saturdays
+  single: { url: 'https://buy.stripe.com/5kQcN480dfpG9IO7my3wQ03', adjustable: true }, // £25, one Saturday
 };
-export const paymentLink = (option) => ({
-  url: (option === 'block' ? process.env.STRIPE_LINK_BLOCK : process.env.STRIPE_LINK_SINGLE) || LINKS[option] || '',
-  adjustable: process.env.STRIPE_LINKS_ADJUSTABLE === 'true',
-});
+export const paymentLink = (option) => {
+  const link = LINKS[option] || {};
+  const envUrl = option === 'block' ? process.env.STRIPE_LINK_BLOCK : process.env.STRIPE_LINK_SINGLE;
+  const envAdjustable = process.env.STRIPE_LINKS_ADJUSTABLE;
+  return {
+    url: envUrl || link.url || '',
+    adjustable: envAdjustable ? envAdjustable === 'true' : Boolean(link.adjustable),
+  };
+};
