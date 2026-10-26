@@ -14,7 +14,8 @@
 
   --c-clubs: #FC8400;  --c-clubs-ink: #18306C; --c-clubs-soft: #FFF1E0;
   --c-camps: #1565C0;  --c-camps-ink: #FFFFFF; --c-camps-soft: #E6F0FB;
-  --c-sat:   #0B7A5E;  --c-sat-ink:   #FFFFFF; --c-sat-soft:   #E3F4EE;
+  --c-sat:   #18306C;  --c-sat-ink:   #FFFFFF; --c-sat-soft:   #E8F2FC;
+  --sky: #8CC8F4; /* light blue accent for use on navy */
 
   --ink: #18213D;
   --muted: #566078;
@@ -421,7 +422,7 @@ body.svc-clubs .facts-bar .i { color: var(--orange-2); }
 }
 .theme__back .theme__flip { background: var(--tint); margin-top: auto; }
 .theme--1 { --tbg: linear-gradient(150deg, #1565C0, #0F2150); }
-.theme--2 { --tbg: linear-gradient(150deg, #0B7A5E, #0F4F3E); }
+.theme--2 { --tbg: linear-gradient(150deg, #2A4A93, #18306C); }
 .theme--3 { --tbg: linear-gradient(150deg, #E06F00, #B34700); }
 
 /* ---------- Holiday chips / register interest ---------- */
@@ -635,21 +636,21 @@ body.svc-clubs .facts-bar .i { color: var(--orange-2); }
 /* ---------- Saturday Club banner (home) ---------- */
 .sat-banner {
   position: relative; overflow: hidden; display: grid; grid-template-columns: 1.1fr .9fr; gap: 0;
-  border-radius: var(--r-lg); background: linear-gradient(135deg, #0B7A5E 0%, #0A5F4A 100%); color: #fff; box-shadow: var(--sh-lg);
+  border-radius: var(--r-lg); background: linear-gradient(135deg, #18306C 0%, #2A4A93 100%); color: #fff; box-shadow: var(--sh-lg);
 }
 .sat-banner__body { padding: 52px; position: relative; z-index: 1; }
 .sat-banner h2 { color: #fff; margin: 14px 0 6px; }
-.sat-banner .slogan { font-size: 1.25rem; font-weight: 700; color: #FFD29A; margin-bottom: 18px; }
+.sat-banner .slogan { font-size: 1.25rem; font-weight: 700; color: var(--orange); margin-bottom: 18px; }
 .sat-banner p { color: rgba(255, 255, 255, .88); }
 .sat-banner__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; margin: 24px 0 28px; }
 .sat-banner__facts li { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: .95rem; }
-.sat-banner__facts .i { color: #FFD29A; margin-top: 3px; }
+.sat-banner__facts .i { color: var(--sky); margin-top: 3px; }
 .sat-banner__price { display: inline-flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; margin-bottom: 24px; font-weight: 700; }
 .sat-banner__price b { font-size: 1.6rem; color: #fff; }
 .sat-banner__price span { color: rgba(255, 255, 255, .8); font-weight: 500; }
 .sat-banner__img { position: relative; min-height: 100%; }
 .sat-banner__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.sat-banner__img::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, #0A5F4A 0%, rgba(10, 95, 74, 0) 35%); }
+.sat-banner__img::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, #22408A 0%, rgba(34, 64, 138, 0) 35%); }
 
 /* ---------- Programme cards ---------- */
 .progs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -669,7 +670,7 @@ body.svc-clubs .facts-bar .i { color: var(--orange-2); }
 .prog__go { margin-top: 18px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--navy); }
 .prog__go .i { transition: transform .15s; color: var(--cd, var(--c)); }
 .prog:hover .prog__go .i { transform: translateX(4px); }
-.prog--sat { --c: var(--c-sat); --ci: #fff; --cd: var(--c-sat); }
+.prog--sat { --c: var(--c-sat); --ci: #fff; --cd: var(--navy-3); }
 .prog--camps { --c: var(--c-camps); --ci: #fff; --cd: var(--c-camps); }
 .prog--clubs { --c: var(--c-clubs); --ci: var(--navy); --cd: var(--orange-2); }
 
@@ -686,7 +687,7 @@ body.svc-clubs .icard .ic { color: var(--orange-2); }
 /* ---------- Prose blocks ---------- */
 .prose p { font-size: 1.08rem; color: var(--ink); margin-top: 14px; }
 .prose p:first-child { margin-top: 0; }
-.slogan-lg { font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 700; color: #FFD29A; margin: -6px 0 6px; }
+.slogan-lg { font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 700; color: var(--orange); margin: -6px 0 6px; }
 .phero--plain .slogan-lg { color: var(--orange-2); }
 
 /* ---------- Saturday info card ---------- */
@@ -701,18 +702,19 @@ body.svc-clubs .icard .ic { color: var(--orange-2); }
 .info-card dd a { color: var(--c-sat); font-weight: 600; }
 .info-card__foot { padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: var(--c-sat-soft); }
 .prices { display: flex; flex-wrap: wrap; gap: 10px; }
-.price-pill { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 14px; border-radius: 12px; background: #fff; border: 1px solid #BFE3D6; }
+.price-pill { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 14px; border-radius: 12px; background: #fff; border: 1px solid #C6DDF5; }
 .price-pill b { font-size: 1.25rem; color: var(--navy); }
 .price-pill span { font-size: .85rem; color: var(--muted); }
 .date-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .date-chip { padding: 4px 10px; border-radius: 999px; background: var(--c-sat-soft); color: var(--c-sat); font-weight: 700; font-size: .85rem; }
 
 /* ---------- Big booking CTA ---------- */
-.book-cta { text-align: center; padding: 64px 32px; border-radius: var(--r-lg); color: #fff; background: linear-gradient(135deg, #0B7A5E, #0A5F4A); position: relative; overflow: hidden; }
+.book-cta { text-align: center; padding: 64px 32px; border-radius: var(--r-lg); color: #fff; background: linear-gradient(135deg, #18306C, #2A4A93); position: relative; overflow: hidden; }
+.book-cta::before { content: ""; position: absolute; width: 300px; height: 300px; left: -110px; bottom: -150px; border-radius: 50%; background: radial-gradient(circle, rgba(140, 200, 244, .35), transparent 70%); }
 .book-cta::after { content: ""; position: absolute; width: 360px; height: 360px; right: -120px; top: -150px; border-radius: 50%; background: radial-gradient(circle, rgba(252, 132, 0, .5), transparent 70%); }
 .book-cta h2 { color: #fff; position: relative; }
 .book-cta p { color: rgba(255, 255, 255, .88); margin: 12px auto 0; max-width: 560px; position: relative; }
-.book-cta .bigprice { position: relative; margin: 22px 0 26px; font-size: 1.3rem; font-weight: 800; color: #FFD29A; }
+.book-cta .bigprice { position: relative; margin: 22px 0 26px; font-size: 1.3rem; font-weight: 800; color: var(--orange); }
 .book-cta .btns { justify-content: center; position: relative; }
 
 /* ---------- Timetable ---------- */
@@ -868,11 +870,11 @@ body.svc-clubs .icard .ic { color: var(--orange-2); }
 @media (max-width: 980px) {
   .sat-banner { grid-template-columns: 1fr; }
   .sat-banner__img { min-height: 260px; order: -1; }
-  .sat-banner__img::before { background: linear-gradient(0deg, #0A5F4A 0%, rgba(10, 95, 74, 0) 40%); }
+  .sat-banner__img::before { background: linear-gradient(0deg, #1F3B7E 0%, rgba(31, 59, 126, 0) 40%); }
   .sat-banner__body { padding: 36px; }
   .progs { grid-template-columns: 1fr 1fr; }
   .booking { grid-template-columns: 1fr; }
-  .summary { position: static; order: -1; }
+  .summary { position: static; }
   .section { padding: 76px 0; }
   .hero__grid, .band, .split, .pack, .contact, .tl { grid-template-columns: 1fr; }
   .split--flip > :first-child { order: 0; }
