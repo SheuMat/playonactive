@@ -14,7 +14,7 @@ export function validateBooking(input, now = Date.now()) {
 
   // Sessions
   let option = b.option === 'block' ? 'block' : b.option === 'single' ? 'single' : null;
-  need(option, 'Choose all five Saturdays or individual Saturdays.');
+  need(option, 'Choose all four Saturdays or individual Saturdays.');
   let dates = Array.isArray(b.dates) ? [...new Set(b.dates.filter((d) => CLUB.dates.includes(d)))].sort() : [];
   if (option === 'block') dates = [...CLUB.dates];
   need(dates.length > 0, 'Choose at least one Saturday.');
@@ -116,7 +116,7 @@ export function bookingRows(booking, ref) {
   const rows = [
     { heading: 'Booking' },
     { label: 'Reference', value: ref },
-    { label: 'Option', value: booking.option === 'block' ? 'All five Saturdays' : 'Individual Saturdays' },
+    { label: 'Option', value: booking.option === 'block' ? 'All four Saturdays' : 'Individual Saturdays' },
     { label: 'Saturdays', value: booking.dates.map(fmtDate).join('\n') },
     { label: 'Children', value: String(booking.children.length) },
     { label: 'Total', value: fmtMoney(booking.total) },

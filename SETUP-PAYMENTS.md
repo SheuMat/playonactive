@@ -8,7 +8,7 @@ parents to the enquiry form, so nothing breaks in the meantime.
 
 The site is set up to use your Stripe **Payment Links**, so no Stripe secret key is needed:
 
-- **All five Saturdays (£110):** `https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01`. Fixed quantity, so
+- **All four Saturdays (£90):** `https://buy.stripe.com/7sYfZg3JXa5m3kqeP03wQ04`. Fixed quantity, so
   families booking several children get one payment button per child.
 - **Single Saturday (£25):** `https://buy.stripe.com/5kQcN480dfpG9IO7my3wQ03`. Quantity can be
   changed on Stripe's page, so a family pays for all their Saturdays and children in one go;
@@ -24,7 +24,7 @@ How it works:
 3. The parent is sent to the payment link, with their email and the reference filled in.
 4. In Stripe, each payment shows the reference as its **Client reference ID**.
 
-If you turn on **Let customers adjust quantity** for the £110 link in Stripe, tell us (or set
+If you turn on **Let customers adjust quantity** for the £90 link in Stripe, tell us (or set
 `adjustable: true` for it in `api/_lib/saturday.js`) so families pay for all children at once.
 
 **Recommended:** in each payment link's settings, under **After payment**, choose
@@ -149,7 +149,7 @@ settings take effect.
 - Prices and dates live in **`api/_lib/saturday.js`** (used for charging) and at the top of
   **`assets/js/booking.js`** (used for display). Change both together.
 - Bookings for a Saturday close at **9:00am that morning**. Past Saturdays can't be booked,
-  and the five-week block can only be booked before the first Saturday.
+  and the four-Saturday block can only be booked before the first Saturday (14 November).
 - There's **no automatic limit on places** yet. Keep an eye on numbers in your inbox or
   Stripe, and ask if you'd like a cap added.
 - Refunds are made from the Stripe dashboard (**Payments → select payment → Refund**).

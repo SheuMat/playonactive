@@ -28,7 +28,7 @@ function linkPayments(booking, ref) {
   const link = paymentLink(booking.option);
   const unit = booking.option === 'block' ? CLUB.blockPrice : CLUB.sessionPrice;
   const places = booking.option === 'block'
-    ? booking.children.map((c) => `${c.first} – all five Saturdays`)
+    ? booking.children.map((c) => `${c.first} – all four Saturdays`)
     : booking.children.flatMap((c) => booking.dates.map((d) => `${c.first} – ${fmtShort(d).replace(/ \d{4}$/, '')}`));
   const email = encodeURIComponent(booking.parent.email);
   const urlFor = (id) => `${link.url}?prefilled_email=${email}&client_reference_id=${id}`;
@@ -43,7 +43,7 @@ export const POST = handle(async (request) => {
   if (!emailReady()) throw new HttpError(503, 'Online booking isn’t open just yet. Please send us an enquiry and we’ll be in touch.');
   if (!optionAvailable(booking.option)) {
     throw new HttpError(422, booking.option === 'single'
-      ? 'Individual Saturdays can’t be booked online just yet. Please choose all five Saturdays, or send us an enquiry.'
+      ? 'Individual Saturdays can’t be booked online just yet. Please choose all four Saturdays, or send us an enquiry.'
       : 'This option can’t be booked online just yet. Please send us an enquiry.');
   }
 
@@ -57,7 +57,7 @@ export const POST = handle(async (request) => {
     const kids = booking.children.length;
     const place = `${CLUB.time}, Southbury Primary School, Enfield`;
     const lineItems = booking.option === 'block'
-      ? [{ price_data: { currency: CLUB.currency, unit_amount: CLUB.blockPrice, product_data: { name: 'Saturday Club – all five Saturdays', description: `7 Nov – 5 Dec 2026, ${place}` } }, quantity: kids }]
+      ? [{ price_data: { currency: CLUB.currency, unit_amount: CLUB.blockPrice, product_data: { name: 'Saturday Club – all four Saturdays', description: `14 Nov – 5 Dec 2026, ${place}` } }, quantity: kids }]
       : booking.dates.map((d) => ({ price_data: { currency: CLUB.currency, unit_amount: CLUB.sessionPrice, product_data: { name: `Saturday Club – ${fmtShort(d)}`, description: place } }, quantity: kids }));
     const session = await stripe('/checkout/sessions', {
       method: 'POST',

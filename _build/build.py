@@ -175,7 +175,7 @@ FOOTER = """<footer class="ftr">
     <div>
       <h2 class="ftr__h">Saturday Club</h2>
       <ul>
-        <li>Starts 7 November 2026</li>
+        <li>Starts 14 November 2026</li>
         <li>Southbury Primary School, Enfield</li>
       </ul>
       <a class="btn btn--primary btn--sm" href="book-saturday-club.html">Book now</a>

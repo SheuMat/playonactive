@@ -8,8 +8,8 @@ export const CLUB = {
   ages: 'School Years 1–5 (ages 6–10)',
   currency: 'gbp',
   sessionPrice: 2500, // pence
-  blockPrice: 11000, // pence, all five Saturdays
-  dates: ['2026-11-07', '2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
+  blockPrice: 9000, // pence, all four Saturdays
+  dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
   years: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
   maxChildren: 4,
   // Bookings for a Saturday close at 09:00 UK time that morning (GMT = UTC in Nov/Dec).
@@ -38,7 +38,7 @@ export const fmtMoney = (pence) => '£' + (pence % 100 ? (pence / 100).toFixed(2
 // pays for several places in one go; otherwise the site shows one payment per place.
 // STRIPE_LINK_BLOCK / STRIPE_LINK_SINGLE / STRIPE_LINKS_ADJUSTABLE in Vercel override these.
 const LINKS = {
-  block: { url: 'https://buy.stripe.com/3cIeVc3JX7Xe8EKdKW3wQ01', adjustable: false }, // £110, all five Saturdays
+  block: { url: 'https://buy.stripe.com/7sYfZg3JXa5m3kqeP03wQ04', adjustable: false }, // £90, all four Saturdays
   single: { url: 'https://buy.stripe.com/5kQcN480dfpG9IO7my3wQ03', adjustable: true }, // £25, one Saturday
 };
 export const paymentLink = (option) => {

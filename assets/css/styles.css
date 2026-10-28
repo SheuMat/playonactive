@@ -775,7 +775,7 @@ body.svc-clubs .icard .ic { color: var(--orange-2); }
 .choice > span:hover { border-color: var(--c-sat); }
 .choice input:checked + span { border-color: var(--c-sat); background: var(--c-sat-soft); box-shadow: 0 0 0 3px var(--c-sat-soft); }
 .choice input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
-.dates { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 16px; }
+.dates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
 .date { position: relative; }
 .date input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .date span { display: flex; flex-direction: column; align-items: center; padding: 12px 6px; border-radius: var(--r-sm); border: 2px solid var(--line); background: #fff; cursor: pointer; transition: all .15s; text-align: center; }
@@ -909,7 +909,7 @@ body.svc-clubs .icard .ic { color: var(--orange-2); }
   .timetable time, .timetable span { padding: 14px 14px; font-size: .93rem; }
   .form-card { padding: 26px 18px; }
   .choices { grid-template-columns: 1fr; }
-  .dates { grid-template-columns: repeat(3, 1fr); }
+  .dates { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .confirm { padding: 30px 18px; }
   .confirm dl { grid-template-columns: 1fr; }
   .confirm dt { border-bottom: 0; padding-bottom: 0; }

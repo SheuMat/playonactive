@@ -34,7 +34,7 @@ export const POST = handle(async (request) => {
   const parentEmail = (s.customer_details && s.customer_details.email) || s.customer_email;
   const dates = (m.dates || '').split(',').filter(Boolean);
   const total = fmtMoney(s.amount_total || 0);
-  const option = m.option === 'block' ? 'All five Saturdays' : 'Individual Saturdays';
+  const option = m.option === 'block' ? 'All four Saturdays' : 'Individual Saturdays';
 
   const summary = [
     { heading: 'Your booking' },

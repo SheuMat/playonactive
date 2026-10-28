@@ -8,8 +8,8 @@
   // Keep in sync with api/_lib/saturday.js (the server re-checks everything and sets the price).
   const CLUB = {
     sessionPrice: 25,
-    blockPrice: 110,
-    dates: ['2026-11-07', '2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
+    blockPrice: 90,
+    dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
     maxChildren: 4,
     cutoff: (d) => Date.parse(`${d}T09:00:00Z`),
   };
@@ -100,14 +100,14 @@
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
   const updateSummary = () => {
     const p = pricing();
-    $('[data-sum-option]').textContent = p.option === 'block' ? 'All five Saturdays' : p.option === 'single' ? 'Individual Saturdays' : '—';
+    $('[data-sum-option]').textContent = p.option === 'block' ? 'All four Saturdays' : p.option === 'single' ? 'Individual Saturdays' : '—';
     $('[data-sum-dates]').textContent = p.dates.length ? p.dates.map(shortDate).join(', ') : '—';
     $('[data-sum-kids]').textContent = String(p.n);
     $('[data-sum-total]').textContent = '£' + p.total;
     const note = $('[data-sum-note]');
     if (p.option === 'block') {
       note.innerHTML = '';
-      note.append(`£110 × ${plural(p.n, 'child').replace('childs', 'children')}`);
+      note.append(`£90 × ${plural(p.n, 'child').replace('childs', 'children')}`);
       if (option() === 'single') {
         const save = document.createElement('span');
         save.className = 'summary__save';
@@ -117,7 +117,7 @@
     } else if (p.option === 'single' && p.dates.length) {
       note.textContent = `£25 × ${plural(p.dates.length, 'Saturday')} × ${plural(p.n, 'child').replace('childs', 'children')}`;
     } else {
-      note.textContent = '£25 per Saturday or £110 for all five, per child.';
+      note.textContent = '£25 per Saturday or £90 for all four, per child.';
     }
     payLabel.textContent = p.total ? `Pay £${p.total} securely` : 'Pay securely';
     datesGroup.hidden = option() !== 'single';
@@ -299,7 +299,7 @@
       step: 'sessions',
       title: 'Saturdays',
       rows: [
-        { label: 'Option', value: p.option === 'block' ? 'All five Saturdays' : 'Individual Saturdays' },
+        { label: 'Option', value: p.option === 'block' ? 'All four Saturdays' : 'Individual Saturdays' },
         { label: 'Saturdays', value: p.dates.map((d) => fmt(d, { weekday: 'long', day: 'numeric', month: 'long' })).join('\n') },
         { label: 'Children', value: String(p.n) },
         { label: 'Total to pay', value: '£' + p.total },
