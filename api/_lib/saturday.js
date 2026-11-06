@@ -7,8 +7,8 @@ export const CLUB = {
   location: 'Southbury Primary School, Swansea Road, Enfield, EN3 4JG',
   ages: 'School Years 1–5 (ages 6–10)',
   currency: 'gbp',
-  sessionPrice: 2500, // pence
-  blockPrice: 9000, // pence, all four Saturdays
+  sessionPrice: 1000, // pence
+  blockPrice: 3500, // pence, all four Saturdays
   dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
   years: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
   maxChildren: 4,
@@ -38,8 +38,8 @@ export const fmtMoney = (pence) => '£' + (pence % 100 ? (pence / 100).toFixed(2
 // pays for several places in one go; otherwise the site shows one payment per place.
 // STRIPE_LINK_BLOCK / STRIPE_LINK_SINGLE / STRIPE_LINKS_ADJUSTABLE in Vercel override these.
 const LINKS = {
-  block: { url: 'https://buy.stripe.com/7sYfZg3JXa5m3kqeP03wQ04', adjustable: false }, // £90, all four Saturdays
-  single: { url: 'https://buy.stripe.com/5kQcN480dfpG9IO7my3wQ03', adjustable: true }, // £25, one Saturday
+  block: { url: 'https://buy.stripe.com/fZubJ080d1yQ8EKfT43wQ07', adjustable: false }, // £35, all four Saturdays
+  single: { url: 'https://buy.stripe.com/5kQbJ0bcpb9q6wCfT43wQ06', adjustable: false }, // £10, one Saturday (no quantity selector)
 };
 export const paymentLink = (option) => {
   const link = LINKS[option] || {};

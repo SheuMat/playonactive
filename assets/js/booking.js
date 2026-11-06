@@ -7,8 +7,8 @@
 
   // Keep in sync with api/_lib/saturday.js (the server re-checks everything and sets the price).
   const CLUB = {
-    sessionPrice: 25,
-    blockPrice: 90,
+    sessionPrice: 10,
+    blockPrice: 35,
     dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'],
     maxChildren: 4,
     cutoff: (d) => Date.parse(`${d}T09:00:00Z`),
@@ -107,7 +107,7 @@
     const note = $('[data-sum-note]');
     if (p.option === 'block') {
       note.innerHTML = '';
-      note.append(`£90 × ${plural(p.n, 'child').replace('childs', 'children')}`);
+      note.append(`£35 × ${plural(p.n, 'child').replace('childs', 'children')}`);
       if (option() === 'single') {
         const save = document.createElement('span');
         save.className = 'summary__save';
@@ -115,9 +115,9 @@
         note.append(save);
       }
     } else if (p.option === 'single' && p.dates.length) {
-      note.textContent = `£25 × ${plural(p.dates.length, 'Saturday')} × ${plural(p.n, 'child').replace('childs', 'children')}`;
+      note.textContent = `£10 × ${plural(p.dates.length, 'Saturday')} × ${plural(p.n, 'child').replace('childs', 'children')}`;
     } else {
-      note.textContent = '£25 per Saturday or £90 for all four, per child.';
+      note.textContent = '£10 per Saturday or £35 for all four, per child.';
     }
     payLabel.textContent = p.total ? `Pay £${p.total} securely` : 'Pay securely';
     datesGroup.hidden = option() !== 'single';

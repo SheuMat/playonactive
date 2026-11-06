@@ -97,7 +97,7 @@ await test('child outside Years 1–5 is rejected', async () => {
   assert.equal(res.status, 422);
 });
 
-await test('block booking: £90 per child (4 Saturdays), Stripe + business email', async () => {
+await test('block booking: £35 per child (4 Saturdays), Stripe + business email', async () => {
   const b = validBooking();
   b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'Yes', sendDetails: 'Needs short instructions' });
   const res = await book.POST(req('/api/book', { method: 'POST', body: b }));
@@ -106,7 +106,7 @@ await test('block booking: £90 per child (4 Saturdays), Stripe + business email
   assert.match(r.url, /^https:\/\/checkout\.stripe\.com/);
   assert.match(r.ref, /^SC-[A-Z2-9]{6}$/);
   const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '9000');
+  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '3500');
   assert.equal(params.get('line_items[0][quantity]'), '2');
   assert.equal(params.get('line_items[1][quantity]'), null);
   assert.equal(params.get('metadata[type]'), 'saturday_club');
@@ -119,28 +119,28 @@ await test('block booking: £90 per child (4 Saturdays), Stripe + business email
   assert.equal(mail.reply_to, 'parent@example.com');
   assert.match(mail.subject, /awaiting payment/);
   assert.match(mail.text, /Asthma/);
-  assert.match(mail.text, /Total: £180/);
+  assert.match(mail.text, /Total: £70/);
   assert.ok(!mail.html.includes('<b>Parent</b>'), 'parent name must be HTML-escaped');
   assert.ok(mail.html.includes('&lt;b&gt;Parent&lt;/b&gt;'));
 });
 
-await test('individual Saturdays: £25 × sessions × children', async () => {
+await test('individual Saturdays: £10 × sessions × children', async () => {
   const b = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-28', 'not-a-date'] });
   const res = await book.POST(req('/api/book', { method: 'POST', body: b }));
   assert.equal(res.status, 200);
   const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '2500');
-  assert.equal(params.get('line_items[1][price_data][unit_amount]'), '2500');
+  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '1000');
+  assert.equal(params.get('line_items[1][price_data][unit_amount]'), '1000');
   assert.equal(params.get('line_items[2][price_data][unit_amount]'), null);
   assert.match(params.get('line_items[0][price_data][product_data][name]'), /14 Nov 2026/);
-  assert.match(emailCalls()[0].text, /Total: £50/);
+  assert.match(emailCalls()[0].text, /Total: £20/);
 });
 
 await test('all four chosen individually is charged as the cheaper block', async () => {
   const b = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'] });
   await book.POST(req('/api/book', { method: 'POST', body: b }));
   const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '9000');
+  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '3500');
   assert.equal(params.get('metadata[option]'), 'block');
 });
 
@@ -164,7 +164,7 @@ const paidEvent = (over = {}) => ({
   id: 'evt_1',
   type: 'checkout.session.completed',
   data: { object: {
-    id: 'cs_test_abc1234567', payment_status: 'paid', amount_total: 18000, payment_intent: 'pi_123',
+    id: 'cs_test_abc1234567', payment_status: 'paid', amount_total: 7000, payment_intent: 'pi_123',
     customer_details: { email: 'parent@example.com' },
     metadata: { type: 'saturday_club', booking_ref: 'SC-ABC234', option: 'block', dates: '2026-11-14,2026-11-21', children: 'Amara Test (Year 3); Leo Test (Year 1)', parent_name: 'Test Parent', parent_phone: '07700900123' },
     ...over,
@@ -187,7 +187,7 @@ await test('webhook sends parent confirmation + PAID email', async () => {
   assert.deepEqual(mails[1].to, ['parent@example.com']);
   assert.match(mails[1].subject, /confirmed \(SC-ABC234\)/);
   assert.match(mails[1].text, /Southbury Primary School/);
-  assert.match(mails[1].text, /£180/);
+  assert.match(mails[1].text, /£70/);
   assert.equal(mails[1].key, 'evt_1-parent');
 });
 
@@ -259,18 +259,18 @@ await test('payment links mode: ready without a Stripe secret key', async () => 
   assert.deepEqual(r.options, { block: true, single: true });
 });
 
-await test('payment links: one child, block -> straight to the £90 link', async () => {
+await test('payment links: one child, block -> straight to the £35 link', async () => {
   const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
   assert.equal(res.status, 200);
   const r = await res.json();
   assert.equal(r.mode, 'links');
   assert.equal(r.payments.length, 1);
   const u = new URL(r.payments[0].url);
-  assert.equal(u.origin + u.pathname, 'https://buy.stripe.com/7sYfZg3JXa5m3kqeP03wQ04');
+  assert.equal(u.origin + u.pathname, 'https://buy.stripe.com/fZubJ080d1yQ8EKfT43wQ07');
   assert.equal(u.searchParams.get('prefilled_email'), 'parent@example.com');
   assert.equal(u.searchParams.get('client_reference_id'), r.ref);
   assert.equal(stripeCalls().length, 0);
-  assert.match(emailCalls()[0].text, /Expected payment\(s\): Amara – all four Saturdays: £90/);
+  assert.match(emailCalls()[0].text, /Expected payment\(s\): Amara – all four Saturdays: £35/);
 });
 
 await test('payment links: two children -> two payments with -1/-2 references', async () => {
@@ -278,7 +278,7 @@ await test('payment links: two children -> two payments with -1/-2 references', 
   b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
   const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
   assert.equal(r.payments.length, 2);
-  assert.equal(r.total, 18000);
+  assert.equal(r.total, 7000);
   assert.ok(r.payments[1].url.endsWith(`client_reference_id=${r.ref}-2`));
   assert.match(r.payments[1].label, /^Leo/);
 });
@@ -290,26 +290,27 @@ await test('payment links: adjustable quantity -> one payment, quantity 2', asyn
   const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
   assert.equal(r.payments.length, 1);
   assert.equal(r.payments[0].quantity, 2);
-  assert.equal(r.payments[0].amount, 18000);
+  assert.equal(r.payments[0].amount, 7000);
   delete process.env.STRIPE_LINKS_ADJUSTABLE;
 });
 
-await test('payment links: individual Saturdays use the adjustable £25 link (one payment)', async () => {
+await test('payment links: £10 link has no quantity selector -> one payment per place', async () => {
   const body = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-21'] });
   body.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
   const r = await (await book.POST(req('/api/book', { method: 'POST', body }))).json();
-  assert.equal(r.total, 10000);
-  assert.equal(r.payments.length, 1);
-  assert.equal(r.payments[0].quantity, 4);
-  assert.match(r.payments[0].url, /^https:\/\/buy\.stripe\.com\/5kQcN480dfpG9IO7my3wQ03\?/);
-  assert.match(emailCalls()[0].text, /£100 \(quantity 4\)/);
+  assert.equal(r.total, 4000);
+  assert.equal(r.payments.length, 4);
+  assert.ok(r.payments.every((p) => p.quantity === 1 && p.amount === 1000));
+  assert.ok(r.payments.every((p) => p.url.startsWith('https://buy.stripe.com/5kQbJ0bcpb9q6wCfT43wQ06?')));
+  assert.deepEqual(r.payments.map((p) => p.url.split('client_reference_id=')[1]), [1, 2, 3, 4].map((n) => `${r.ref}-${n}`));
+  assert.match(r.payments[0].label, /^Amara – Sat,? 14 Nov/);
 });
 
-await test('payment links: one Saturday, one child -> straight to the £25 link', async () => {
+await test('payment links: one Saturday, one child -> straight to the £10 link', async () => {
   const r = await (await book.POST(req('/api/book', { method: 'POST', body: validBooking({ option: 'single', dates: ['2026-11-28'] }) }))).json();
   assert.equal(r.payments.length, 1);
   assert.equal(r.payments[0].quantity, 1);
-  assert.equal(r.payments[0].amount, 2500);
+  assert.equal(r.payments[0].amount, 1000);
 });
 
 await test('payment links: block link is not adjustable -> one payment per child', async () => {
@@ -317,16 +318,16 @@ await test('payment links: block link is not adjustable -> one payment per child
   b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
   const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
   assert.equal(r.payments.length, 2);
-  assert.ok(r.payments.every((p) => p.amount === 9000 && p.url.includes('7sYfZg3JXa5m3kqeP03wQ04')));
+  assert.ok(r.payments.every((p) => p.amount === 3500 && p.url.includes('fZubJ080d1yQ8EKfT43wQ07')));
   process.env.STRIPE_SECRET_KEY = ENV.STRIPE_SECRET_KEY;
 });
 
 await test('webhook: payment link session (no metadata) sends PAID email', async () => {
-  const ev = paidEvent({ metadata: {}, client_reference_id: 'SC-ABC234-2', amount_total: 9000, customer_details: { email: 'parent@example.com', name: 'Pat Parent' } });
+  const ev = paidEvent({ metadata: {}, client_reference_id: 'SC-ABC234-2', amount_total: 3500, customer_details: { email: 'parent@example.com', name: 'Pat Parent' } });
   const res = await webhook.POST(signed(ev));
   assert.equal(res.status, 200);
   const mails = emailCalls();
-  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234-2 – £90/);
+  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234-2 – £35/);
   assert.match(mails[1].text, /SC-ABC234-2/);
   calls = [];
   await webhook.POST(signed(paidEvent({ metadata: {}, client_reference_id: 'something-else' })));
