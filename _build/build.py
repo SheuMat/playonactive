@@ -26,14 +26,15 @@ def asset_version(rel):
 
 NAV = [
     ("home", "index.html", "Home", ""),
-    ("saturday", "saturday-club.html", "Saturday Club", "sat"),
+    ("taster", "taster.html", "Book Your Taster", "sat"),
     ("camps", "holiday-camps.html", "Holiday Camps", "camps"),
     ("clubs", "after-school-clubs.html", "After-School Clubs", "clubs"),
     ("about", "about.html", "About", ""),
     ("contact", "contact.html", "Contact", ""),
 ]
 
-BOOK_URL = "book-saturday-club.html"
+BOOK_URL = "taster.html#book"
+PLAY_DAY_URL = "taster.html#play-day"
 
 # Every photo on the site is referenced in the page sources as {{img:key}}.
 # Swap a photo here and rebuild; see IMAGES.md for sources and licences.
@@ -137,13 +138,13 @@ def header(active):
       {' '.join(links)}
     </nav>
     <div class="hdr__cta">
-      <a class="btn btn--primary" href="{BOOK_URL}">Book Saturday Club</a>
+      <a class="btn btn--primary" href="{PLAY_DAY_URL}">Play Day</a>
       <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu" data-burger><span></span><span></span><span></span></button>
     </div>
   </div>
   <nav class="drawer" id="drawer" aria-label="Mobile" data-drawer>
     {' '.join(drawer)}
-    <a class="btn btn--primary btn--block" href="{BOOK_URL}">Book Saturday Club</a>
+    <a class="btn btn--primary btn--block" href="{PLAY_DAY_URL}">Play Day</a>
   </nav>
 </header>
 """
@@ -153,12 +154,12 @@ FOOTER = """<footer class="ftr">
   <div class="wrap ftr__grid">
     <div class="ftr__brand">
       <a class="ftr__logo" href="index.html"><img src="assets/img/logo.png" alt="PlayOn Active" width="150" height="62" loading="lazy" /></a>
-      <p>Get them moving. Watch them grow. Play-based Saturday Club, holiday camps and after-school clubs for primary-age children.</p>
+      <p>Get them moving. Watch them grow. Play-based multi-sports and creative activities for primary-age children.</p>
     </div>
     <div>
       <h2 class="ftr__h">Programmes</h2>
       <ul>
-        <li><a href="saturday-club.html"><span class="dot dot--sat"></span>Saturday Club</a></li>
+        <li><a href="taster.html"><span class="dot dot--sat"></span>Free Taster Day</a></li>
         <li><a href="holiday-camps.html"><span class="dot dot--camps"></span>Holiday Camps</a></li>
         <li><a href="after-school-clubs.html"><span class="dot dot--clubs"></span>After-School Clubs</a></li>
       </ul>
@@ -170,20 +171,21 @@ FOOTER = """<footer class="ftr">
         <li><a href="contact.html">Contact</a></li>
         <li><a href="about.html#safeguarding">Safeguarding</a></li>
         <li><a href="privacy.html">Privacy notice</a></li>
+        <li><a href="terms.html">Terms &amp; conditions</a></li>
       </ul>
     </div>
     <div>
-      <h2 class="ftr__h">Saturday Club</h2>
+      <h2 class="ftr__h">Free Taster Day</h2>
       <ul>
-        <li>Starts 14 November 2026</li>
+        <li>Saturday 28 November, 10am&ndash;2pm</li>
         <li>Southbury Primary School, Enfield</li>
       </ul>
-      <a class="btn btn--primary btn--sm" href="book-saturday-club.html">Book now</a>
+      <a class="btn btn--primary btn--sm" href="taster.html#book">Book your free place</a>
     </div>
   </div>
   <div class="wrap ftr__base">
     <span>&copy; <span data-year>2026</span> PlayOn Active</span>
-    <span><a href="privacy.html">Privacy</a> &middot; <a href="about.html#safeguarding">Safeguarding</a></span>
+    <span><a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="about.html#safeguarding">Safeguarding</a></span>
   </div>
 </footer>
 """
@@ -199,7 +201,7 @@ def build():
         meta = json.loads(m.group(1))
         body = text[m.end():].strip("\n")
         fab = "" if meta.get("nofab") else (
-            f'<a class="fab" href="{BOOK_URL}" data-fab>{{{{icon:calendar}}}} Book Saturday Club</a>\n'
+            f'<a class="fab" href="{BOOK_URL}" data-fab>{{{{icon:calendar}}}} Book your free taster</a>\n'
         )
         extra = "".join(
             f'<script src="{js}?v={asset_version(js)}" defer></script>\n' for js in meta.get("scripts", [])

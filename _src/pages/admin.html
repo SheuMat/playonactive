@@ -1,0 +1,33 @@
+<!--meta
+{"file": "admin.html", "nav": "", "body": "page-admin", "nofab": true, "noindex": true,
+ "scripts": ["assets/js/admin.js"],
+ "title": "Bookings | PlayOn Active",
+ "description": "PlayOn Active bookings."}
+-->
+<section class="adm">
+  <div class="wrap">
+    <div class="notice notice--test" data-a-test hidden>{{icon:info}}<span><b>Test area:</b> these are test bookings only, kept separately from real ones. <button type="button" class="link-btn" data-a-reset>Clear all test bookings</button></span></div>
+
+    <div class="tform__card adm__signin" data-a-signin hidden>
+      <h1>Bookings</h1>
+      <p class="lead">To see bookings and the waiting list, we'll email a sign-in link to the PlayOn Active bookings inbox. The link works for 14 days. Every new-booking email also includes one.</p>
+      <button type="button" class="btn btn--navy btn--lg" data-a-send>{{icon:mail}} Email me a sign-in link</button>
+      <p class="form-msg form-msg--info" data-a-sent hidden>Sent. Check the bookings inbox for "Your PlayOn Active bookings link".</p>
+    </div>
+
+    <div data-a-app hidden>
+      <div class="adm__top">
+        <h1>Bookings</h1>
+        <div class="adm__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-a-refresh>{{icon:refresh}} Refresh</button>
+          <button type="button" class="btn btn--primary btn--sm" data-a-csv>{{icon:doc}} Download CSV</button>
+        </div>
+      </div>
+      <div class="adm__tabs" role="tablist" data-a-tabs></div>
+      <div class="adm__stats" data-a-stats></div>
+      <div class="adm__search"><input type="search" placeholder="Search name, school, email, reference" data-a-search aria-label="Search bookings" /></div>
+      <div data-a-list></div>
+      <p class="hint adm__updated" data-a-updated></p>
+    </div>
+  </div>
+</section>

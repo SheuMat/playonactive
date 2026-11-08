@@ -1,360 +1,350 @@
-// Offline tests for the API functions. Stripe and Resend are simulated, so no keys
-// or network access are needed.  Run:  node _build/test-api.mjs
+// Offline tests for the booking API: node _build/test-api.mjs
+// Uses an in-memory store and a fake Resend, so nothing real is booked or sent.
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 
-const ENV = {
-  STRIPE_SECRET_KEY: 'sk_test_dummy',
-  STRIPE_WEBHOOK_SECRET: 'whsec_dummy',
-  RESEND_API_KEY: 're_dummy',
-  EMAIL_FROM: 'PlayOn Active <bookings@example.com>',
-  EMAIL_TO: 'owner@example.com',
-};
-const setEnv = (on) => { for (const k of Object.keys(ENV)) { if (on) process.env[k] = ENV[k]; else delete process.env[k]; } };
+process.env.RESEND_API_KEY = 're_test_key';
+process.env.EMAIL_TO = 'owner@playonactive.co.uk';
+process.env.EMAIL_FROM = 'PlayOn Active <hello@playonactive.co.uk>';
+process.env.SITE_URL = 'https://www.playonactive.co.uk';
+process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
+globalThis.__poaMemStore = new Map();
 
-// --- fake clock (bookings depend on today's date) ---
-const realNow = Date.now;
-const setNow = (iso) => { Date.now = () => Date.parse(iso); };
-
-// --- fake fetch ---
-let calls = [];
-let stripeSession = null;
+const sent = [];
+const realFetch = globalThis.fetch;
 globalThis.fetch = async (url, opts = {}) => {
-  calls.push({ url: String(url), opts });
-  if (String(url).startsWith('https://api.stripe.com/v1/checkout/sessions') && opts.method === 'POST') {
-    return new Response(JSON.stringify({ id: 'cs_test_abc1234567', url: 'https://checkout.stripe.com/c/pay/cs_test_abc1234567' }), { status: 200 });
+  if (String(url).startsWith('https://api.resend.com/')) {
+    sent.push(JSON.parse(opts.body));
+    return new Response(JSON.stringify({ id: 'em_' + sent.length }), { status: 200 });
   }
-  if (String(url).startsWith('https://api.stripe.com/v1/checkout/sessions/')) {
-    return new Response(JSON.stringify(stripeSession), { status: 200 });
-  }
-  if (String(url) === 'https://api.resend.com/emails') {
-    return new Response(JSON.stringify({ id: 'email_1' }), { status: 200 });
-  }
-  throw new Error('Unexpected fetch ' + url);
+  return realFetch(url, opts);
 };
-const stripeCalls = () => calls.filter((c) => c.url.includes('api.stripe.com'));
-const emailCalls = () => calls.filter((c) => c.url.includes('api.resend.com')).map((c) => ({ ...JSON.parse(c.opts.body), key: c.opts.headers['Idempotency-Key'] }));
 
-const req = (path, { method = 'GET', body, headers = {} } = {}) =>
-  new Request('https://playonactive.example' + path, {
-    method,
-    headers: body !== undefined ? { 'content-type': 'application/json', ...headers } : headers,
-    body: body === undefined ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
-  });
-
-const book = await import('../api/book.js');
+const signup = await import('../api/signup.js');
+const cancel = await import('../api/cancel.js');
+const admin = await import('../api/admin.js');
 const webhook = await import('../api/stripe-webhook.js');
-const status = await import('../api/booking-status.js');
-const enquiry = await import('../api/enquiry.js');
+const B = await import('../api/_lib/bookings.js');
 
-const validBooking = (over = {}) => ({
-  option: 'block',
-  dates: [],
-  parent: { name: 'Test <b>Parent</b>', relationship: 'Mum', email: 'parent@example.com', phone: '07700 900123', address1: '1 Test Street', town: 'Enfield', postcode: 'EN3 4JG' },
-  children: [{ first: 'Amara', last: 'Test', dob: '2018-05-04', year: 'Year 3', school: 'Test Primary', send: 'No', allergies: 'Peanuts', medical: 'Asthma' }],
-  emergency: { name: 'Gran Test', relationship: 'Grandmother', phone: '07700 900456' },
-  consents: { photo: 'Yes – internal use only', firstAid: 'Yes', accurate: true, terms: true, privacy: true },
-  ...over,
-});
+const site = 'https://www.playonactive.co.uk';
+const post = (handler, path, body, headers = {}) =>
+  handler.POST(new Request(site + path, { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body) }));
+const get = (handler, path, headers = {}) => handler.GET(new Request(site + path, { headers }));
+const out = async (res) => ({ status: res.status, body: await res.json() });
+
+let n = 0;
+const form = (event, kids = 1, over = {}) => {
+  n++;
+  return {
+    event,
+    parent: { name: `Parent ${n}`, email: `parent${n}@example.com`, mobile: '07700 900' + String(n).padStart(3, '0') },
+    children: Array.from({ length: kids }, (_, i) => ({ name: `Child ${n}${'ab'[i]} Smith`, year: 'Year 2', school: 'Southbury Primary', allergies: i ? '' : 'Peanuts' })),
+    emergency: { name: 'Gran Smith', phone: '07700 900999' },
+    collectors: 'Parent and Gran',
+    consents: { photo: 'No', firstAid: true, terms: true, marketing: false },
+    ...over,
+  };
+};
+const book = async (event, kids, over) => out(await post(signup, '/api/signup', form(event, kids, over)));
+const reset = () => { globalThis.__poaMemStore.clear(); sent.length = 0; };
+const live = (ev) => JSON.parse(globalThis.__poaMemStore.get(`poa:live:${ev}`) || '{"bookings":[]}');
+const tokenOf = (ref) => live('taster').bookings.find((b) => b.ref === ref).cancelToken;
+const confirmedKids = () => live('taster').bookings.filter((b) => b.status === 'confirmed').reduce((s, b) => s + b.children.length, 0);
+const mailTo = (addr) => sent.filter((m) => m.to.includes(addr));
 
 let passed = 0;
-const test = async (name, fn) => { calls = []; await fn(); passed++; console.log('  ✓', name); };
-
-console.log('API tests');
-setNow('2026-10-21T12:00:00Z');
-
-await test('booking reports not ready without keys', async () => {
-  setEnv(false);
-  const r = await (await book.GET(req('/api/book'))).json();
-  assert.equal(r.ready, false);
-  assert.equal(r.sessions.length, 4);
-  assert.ok(r.sessions.every((s) => s.open));
-  const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
-  assert.equal(res.status, 503);
-  assert.equal(calls.length, 0);
-});
-
-setEnv(true);
-
-await test('booking reports ready + test mode with keys', async () => {
-  const r = await (await book.GET(req('/api/book'))).json();
-  assert.equal(r.ready, true);
-  assert.equal(r.testMode, true);
-});
-
-await test('invalid booking is rejected with reasons', async () => {
-  const res = await book.POST(req('/api/book', { method: 'POST', body: { option: 'single', dates: [] } }));
-  assert.equal(res.status, 422);
-  const r = await res.json();
-  assert.ok(r.details.length >= 5);
-  assert.equal(calls.length, 0);
-});
-
-await test('child outside Years 1–5 is rejected', async () => {
-  const b = validBooking();
-  b.children[0].year = 'Year 6';
-  const res = await book.POST(req('/api/book', { method: 'POST', body: b }));
-  assert.equal(res.status, 422);
-});
-
-await test('block booking: £35 per child (4 Saturdays), Stripe + business email', async () => {
-  const b = validBooking();
-  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'Yes', sendDetails: 'Needs short instructions' });
-  const res = await book.POST(req('/api/book', { method: 'POST', body: b }));
-  assert.equal(res.status, 200);
-  const r = await res.json();
-  assert.match(r.url, /^https:\/\/checkout\.stripe\.com/);
-  assert.match(r.ref, /^SC-[A-Z2-9]{6}$/);
-  const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '3500');
-  assert.equal(params.get('line_items[0][quantity]'), '2');
-  assert.equal(params.get('line_items[1][quantity]'), null);
-  assert.equal(params.get('metadata[type]'), 'saturday_club');
-  assert.equal(params.get('metadata[dates]'), '2026-11-14,2026-11-21,2026-11-28,2026-12-05');
-  assert.equal(params.get('customer_email'), 'parent@example.com');
-  assert.equal(params.get('success_url'), 'https://playonactive.example/booking-confirmed?session_id={CHECKOUT_SESSION_ID}');
-  assert.equal(stripeCalls()[0].opts.headers.Authorization, 'Bearer sk_test_dummy');
-  const [mail] = emailCalls();
-  assert.deepEqual(mail.to, ['owner@example.com']);
-  assert.equal(mail.reply_to, 'parent@example.com');
-  assert.match(mail.subject, /awaiting payment/);
-  assert.match(mail.text, /Asthma/);
-  assert.match(mail.text, /Total: £70/);
-  assert.ok(!mail.html.includes('<b>Parent</b>'), 'parent name must be HTML-escaped');
-  assert.ok(mail.html.includes('&lt;b&gt;Parent&lt;/b&gt;'));
-});
-
-await test('individual Saturdays: £10 × sessions × children', async () => {
-  const b = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-28', 'not-a-date'] });
-  const res = await book.POST(req('/api/book', { method: 'POST', body: b }));
-  assert.equal(res.status, 200);
-  const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '1000');
-  assert.equal(params.get('line_items[1][price_data][unit_amount]'), '1000');
-  assert.equal(params.get('line_items[2][price_data][unit_amount]'), null);
-  assert.match(params.get('line_items[0][price_data][product_data][name]'), /14 Nov 2026/);
-  assert.match(emailCalls()[0].text, /Total: £20/);
-});
-
-await test('all four chosen individually is charged as the cheaper block', async () => {
-  const b = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-21', '2026-11-28', '2026-12-05'] });
-  await book.POST(req('/api/book', { method: 'POST', body: b }));
-  const params = new URLSearchParams(stripeCalls()[0].opts.body);
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '3500');
-  assert.equal(params.get('metadata[option]'), 'block');
-});
-
-await test('past Saturdays cannot be booked; block closes after first Saturday', async () => {
-  setNow('2026-11-17T12:00:00Z');
-  const s = await (await book.GET(req('/api/book'))).json();
-  assert.deepEqual(s.sessions.map((x) => x.open), [false, true, true, true]);
-  assert.equal((await book.POST(req('/api/book', { method: 'POST', body: validBooking() }))).status, 422);
-  assert.equal((await book.POST(req('/api/book', { method: 'POST', body: validBooking({ option: 'single', dates: ['2026-11-14'] }) }))).status, 422);
-  assert.equal((await book.POST(req('/api/book', { method: 'POST', body: validBooking({ option: 'single', dates: ['2026-11-21'] }) }))).status, 200);
-  setNow('2026-10-21T12:00:00Z');
-});
-
-const signed = (event, secret = ENV.STRIPE_WEBHOOK_SECRET) => {
-  const payload = JSON.stringify(event);
-  const t = Math.floor(Date.now() / 1000);
-  const sig = createHmac('sha256', secret).update(`${t}.${payload}`).digest('hex');
-  return req('/api/stripe-webhook', { method: 'POST', body: payload, headers: { 'stripe-signature': `t=${t},v1=${sig}` } });
+const test = async (name, fn) => {
+  try { await fn(); passed++; console.log('  ✓', name); } catch (err) { console.error('  ✗', name); throw err; }
 };
-const paidEvent = (over = {}) => ({
-  id: 'evt_1',
-  type: 'checkout.session.completed',
-  data: { object: {
-    id: 'cs_test_abc1234567', payment_status: 'paid', amount_total: 7000, payment_intent: 'pi_123',
-    customer_details: { email: 'parent@example.com' },
-    metadata: { type: 'saturday_club', booking_ref: 'SC-ABC234', option: 'block', dates: '2026-11-14,2026-11-21', children: 'Amara Test (Year 3); Leo Test (Year 1)', parent_name: 'Test Parent', parent_phone: '07700900123' },
-    ...over,
-  } },
+
+console.log('Taster Day');
+
+await test('status is open and never reveals numbers', async () => {
+  reset();
+  const r = await out(await get(signup, '/api/signup'));
+  assert.equal(r.body.ready, true);
+  assert.deepEqual(r.body.events, { taster: { status: 'open' }, playday: { status: 'open' } });
 });
 
-await test('webhook rejects a bad signature', async () => {
-  const res = await webhook.POST(signed(paidEvent(), 'whsec_wrong'));
-  assert.equal(res.status, 400);
-  assert.equal(emailCalls().length, 0);
+let refs = [];
+await test('20 children are confirmed (18 single bookings + one family of 2)', async () => {
+  reset();
+  refs = [];
+  for (let i = 0; i < 18; i++) {
+    const r = await book('taster', 1);
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.equal(r.body.status, 'confirmed');
+    refs.push(r.body.ref);
+  }
+  const fam = await book('taster', 2);
+  assert.equal(fam.body.status, 'confirmed');
+  refs.push(fam.body.ref);
+  assert.equal(confirmedKids(), 20);
+  // each booking: parent confirmation + admin alert
+  assert.equal(sent.length, 38);
+  const conf = mailTo(`parent1@example.com`)[0];
+  assert.match(conf.subject, /Free Taster Day place is confirmed/);
+  assert.match(conf.html, /\/cancel\?ref=TD-[A-Z0-9]{6}&amp;t=/);
+  assert.match(conf.html, /packed lunch/);
+  assert.match(conf.html, /£5/);
+  assert.equal(conf.reply_to, 'hello@playonactive.co.uk');
+  const alert = mailTo('owner@playonactive.co.uk').at(-1);
+  assert.match(alert.subject, /20\/20 places taken/);
+  assert.match(alert.html, /Peanuts/);
+  assert.match(alert.html, /\/admin\?key=/);
 });
 
-await test('webhook sends parent confirmation + PAID email', async () => {
-  const res = await webhook.POST(signed(paidEvent()));
-  assert.equal(res.status, 200);
-  const mails = emailCalls();
-  assert.equal(mails.length, 2);
-  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234/);
-  assert.equal(mails[0].key, 'evt_1-business');
-  assert.deepEqual(mails[1].to, ['parent@example.com']);
-  assert.match(mails[1].subject, /confirmed \(SC-ABC234\)/);
-  assert.match(mails[1].text, /Southbury Primary School/);
-  assert.match(mails[1].text, /£70/);
-  assert.equal(mails[1].key, 'evt_1-parent');
+await test('public status switches to the waiting list when full', async () => {
+  const r = await out(await get(signup, '/api/signup'));
+  assert.equal(r.body.events.taster.status, 'waitlist');
+  assert.ok(!JSON.stringify(r.body).match(/\d{2}/), 'no numbers in the public status');
 });
 
-await test('webhook: business email first, parent email after', async () => {
-  await webhook.POST(signed(paidEvent({ id: 'cs_test_order' })));
-  const mails = emailCalls();
-  assert.match(mails[0].subject, /^PAID/);
-  assert.deepEqual(mails[1].to, ['parent@example.com']);
+let wA, wB, wC;
+await test('more bookings join the waiting list in order (never over 20)', async () => {
+  sent.length = 0;
+  wA = (await book('taster', 1)).body;
+  wB = (await book('taster', 2)).body;
+  wC = (await book('taster', 1)).body;
+  assert.deepEqual([wA.status, wB.status, wC.status], ['waitlist', 'waitlist', 'waitlist']);
+  assert.equal(confirmedKids(), 20);
+  const wl = mailTo(wA.email)[0];
+  assert.match(wl.subject, /waiting list/);
+  assert.match(wl.html, /Leave the waiting list/);
+  assert.ok(mailTo('owner@playonactive.co.uk').every((m) => /WAITING LIST/.test(m.subject)));
 });
 
-await test('without EMAIL_FROM: booking works, uses Resend test sender, skips parent email', async () => {
-  delete process.env.EMAIL_FROM;
-  const r = await (await book.GET(req('/api/book'))).json();
-  assert.equal(r.ready, true);
-  const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
-  assert.equal(res.status, 200);
-  assert.equal(emailCalls()[0].from, 'PlayOn Active <onboarding@resend.dev>');
-  calls = [];
-  const wh = await webhook.POST(signed(paidEvent()));
-  assert.equal(wh.status, 200);
-  const mails = emailCalls();
-  assert.equal(mails.length, 1);
-  assert.match(mails[0].subject, /^PAID/);
-  process.env.EMAIL_FROM = ENV.EMAIL_FROM;
+await test('cancel link: wrong token is refused', async () => {
+  const r = await out(await post(cancel, '/api/cancel', { ref: refs[0], t: 'nope' }));
+  assert.equal(r.status, 404);
+  const g = await out(await get(cancel, `/api/cancel?ref=${refs[0]}&t=wrong`));
+  assert.equal(g.status, 404);
 });
 
-await test('parent email failure does not fail the webhook', async () => {
-  const realFetch = globalThis.fetch;
-  globalThis.fetch = async (url, opts) => {
-    if (String(url).includes('resend') && JSON.parse(opts.body).to[0] === 'parent@example.com') {
-      calls.push({ url: String(url), opts });
-      return new Response('{"message":"domain not verified"}', { status: 403 });
-    }
-    return realFetch(url, opts);
+await test('opening the cancel link only shows the booking (does not cancel)', async () => {
+  const g = await out(await get(cancel, `/api/cancel?ref=${refs[0]}&t=${tokenOf(refs[0])}`));
+  assert.equal(g.status, 200);
+  assert.equal(g.body.status, 'confirmed');
+  assert.equal(confirmedKids(), 20);
+});
+
+await test('cancelling gives the place to the first family on the waiting list + "You’ve got a place!"', async () => {
+  sent.length = 0;
+  const r = await out(await post(cancel, '/api/cancel', { ref: refs[0], t: tokenOf(refs[0]) }));
+  assert.equal(r.status, 200);
+  assert.equal(r.body.status, 'cancelled');
+  const s = live('taster');
+  assert.equal(s.bookings.find((b) => b.ref === wA.ref).status, 'confirmed');
+  assert.equal(confirmedKids(), 20);
+  const got = mailTo(wA.email);
+  assert.equal(got.length, 1);
+  assert.match(got[0].subject, /You’ve got a place!/);
+  assert.match(got[0].html, /\/cancel\?ref=/);
+  assert.match(mailTo('parent1@example.com')[0].subject, /cancelled/);
+  const alert = mailTo('owner@playonactive.co.uk')[0];
+  assert.match(alert.subject, /CANCELLATION/);
+  assert.match(alert.html, new RegExp(wA.ref));
+});
+
+await test('cancelling twice is harmless', async () => {
+  sent.length = 0;
+  const r = await out(await post(cancel, '/api/cancel', { ref: refs[0], t: tokenOf(refs[0]) }));
+  assert.equal(r.body.already, true);
+  assert.equal(sent.length, 0);
+});
+
+await test('one free place skips a family of 2 (they keep their spot) and goes to the next who fits', async () => {
+  await post(cancel, '/api/cancel', { ref: refs[1], t: tokenOf(refs[1]) });
+  const s = live('taster');
+  assert.equal(s.bookings.find((b) => b.ref === wB.ref).status, 'waitlist');
+  assert.equal(s.bookings.find((b) => b.ref === wC.ref).status, 'confirmed');
+  assert.equal(confirmedKids(), 20);
+  await post(cancel, '/api/cancel', { ref: refs[2], t: tokenOf(refs[2]) });
+  assert.equal(confirmedKids(), 19);
+  assert.equal(live('taster').bookings.find((b) => b.ref === wB.ref).status, 'waitlist');
+  const r = await out(await get(signup, '/api/signup'));
+  assert.equal(r.body.events.taster.status, 'open');
+  await post(cancel, '/api/cancel', { ref: refs[3], t: tokenOf(refs[3]) });
+  assert.equal(live('taster').bookings.find((b) => b.ref === wB.ref).status, 'confirmed');
+  assert.equal(confirmedKids(), 20);
+});
+
+await test('leaving the waiting list does not give anyone a place', async () => {
+  const w = (await book('taster', 1)).body;
+  assert.equal(w.status, 'waitlist');
+  sent.length = 0;
+  await post(cancel, '/api/cancel', { ref: w.ref, t: tokenOf(w.ref) });
+  assert.equal(confirmedKids(), 20);
+  assert.match(mailTo(w.email)[0].subject, /left the Free Taster Day waiting list/);
+  assert.match(mailTo('owner@playonactive.co.uk')[0].subject, /WAITING LIST LEAVER/);
+});
+
+await test('40 people booking at the same moment can never take more than 20 places', async () => {
+  reset();
+  const results = await Promise.all(Array.from({ length: 40 }, () => post(signup, '/api/signup', form('taster', 1)).then(out)));
+  assert.ok(results.every((r) => r.status === 200), JSON.stringify(results.find((r) => r.status !== 200)));
+  assert.equal(confirmedKids(), 20);
+  assert.equal(results.filter((r) => r.body.status === 'confirmed').length, 20);
+  assert.equal(results.filter((r) => r.body.status === 'waitlist').length, 20);
+});
+
+await test('the same child cannot be booked twice', async () => {
+  reset();
+  const f = form('taster', 1);
+  assert.equal((await out(await post(signup, '/api/signup', f))).status, 200);
+  const again = await out(await post(signup, '/api/signup', f));
+  assert.equal(again.status, 409);
+});
+
+await test('required fields and consents are checked on the server', async () => {
+  const r = await book('taster', 1, { consents: { photo: '', firstAid: false, terms: false } });
+  assert.equal(r.status, 422);
+  assert.ok(r.body.details.some((d) => /photo/i.test(d)));
+  assert.ok(r.body.details.some((d) => /first aid/i.test(d)));
+  assert.ok(r.body.details.some((d) => /terms/i.test(d)));
+  const y = await book('taster', 1, { children: [{ name: 'Sam Lee', year: 'Year 6', school: 'X School' }] });
+  assert.equal(y.status, 422);
+  const three = await book('taster', 1, { children: [1, 2, 3].map((i) => ({ name: `Kid ${i} Lee`, year: 'Year 1', school: 'X School' })) });
+  assert.equal(three.status, 422);
+});
+
+await test('bookings close when the day starts', async () => {
+  const realNow = Date.now;
+  Date.now = () => Date.parse('2026-11-28T10:00:01Z');
+  try {
+    const r = await book('taster', 1);
+    assert.equal(r.status, 409);
+    const s = await out(await get(signup, '/api/signup'));
+    assert.equal(s.body.events.taster.status, 'closed');
+  } finally { Date.now = realNow; }
+});
+
+console.log('Play Day');
+
+await test('booking 2 children: saved as awaiting payment, one £10 Stripe payment per child, email sent', async () => {
+  reset();
+  const r = await book('playday', 2);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.status, 'awaiting_payment');
+  assert.match(r.body.ref, /^PD-/);
+  assert.equal(r.body.payments.length, 2);
+  r.body.payments.forEach((p, i) => {
+    assert.equal(p.amount, 1000);
+    assert.ok(p.url.startsWith('https://buy.stripe.com/5kQbJ0bcpb9q6wCfT43wQ06?prefilled_email='));
+    assert.ok(p.url.endsWith(`client_reference_id=${r.body.ref}-${i + 1}`));
+  });
+  const one = await book('playday', 1);
+  assert.ok(one.body.payments[0].url.endsWith(`client_reference_id=${one.body.ref}`));
+  const mail = mailTo(r.body.email)[0];
+  assert.match(mail.subject, /Play Day booking/);
+  assert.match(mail.html, /buy\.stripe\.com/);
+  assert.match(mailTo('owner@playonactive.co.uk')[0].subject, /awaiting £20/);
+  assert.ok(!JSON.stringify(sent).includes('£5 link'), 'no £5 link anywhere');
+});
+
+await test('Play Day has no cap by default, but PLAYDAY_CAP enforces one', async () => {
+  reset();
+  for (let i = 0; i < 25; i++) assert.equal((await book('playday', 1)).status, 200);
+  process.env.PLAYDAY_CAP = '26';
+  try {
+    assert.equal((await book('playday', 2)).status, 409);
+    assert.equal((await book('playday', 1)).status, 200);
+    assert.equal((await book('playday', 1)).status, 409);
+    const s = await out(await get(signup, '/api/signup'));
+    assert.equal(s.body.events.playday.status, 'full');
+  } finally { delete process.env.PLAYDAY_CAP; }
+});
+
+await test('Stripe webhook marks a Play Day booking paid once every child is paid', async () => {
+  reset();
+  const r = (await book('playday', 2)).body;
+  const hook = async (crId, id) => {
+    const payload = JSON.stringify({ id, type: 'checkout.session.completed', data: { object: { client_reference_id: crId, payment_status: 'paid', amount_total: 1000, payment_intent: 'pi_' + id } } });
+    const t = Math.floor(Date.now() / 1000);
+    const sig = createHmac('sha256', 'whsec_test').update(`${t}.${payload}`).digest('hex');
+    return webhook.POST(new Request(site + '/api/stripe-webhook', { method: 'POST', headers: { 'stripe-signature': `t=${t},v1=${sig}` }, body: payload }));
   };
-  const res = await webhook.POST(signed(paidEvent()));
-  globalThis.fetch = realFetch;
+  assert.equal((await hook(`${r.ref}-1`, 'evt_1')).status, 200);
+  assert.equal(live('playday').bookings[0].status, 'awaiting_payment');
+  await hook(`${r.ref}-2`, 'evt_2');
+  assert.equal(live('playday').bookings[0].status, 'paid');
+  const bad = await webhook.POST(new Request(site + '/api/stripe-webhook', { method: 'POST', headers: { 'stripe-signature': 't=1,v1=00' }, body: '{}' }));
+  assert.equal(bad.status, 400);
+});
+
+console.log('Admin');
+
+await test('admin data needs a valid sign-in key', async () => {
+  reset();
+  await book('taster', 2);
+  await book('playday', 1);
+  assert.equal((await get(admin, '/api/admin')).status, 401);
+  assert.equal((await get(admin, '/api/admin?key=123.abc')).status, 401);
+  const r = await out(await get(admin, '/api/admin', { authorization: `Bearer ${B.adminToken()}` }));
+  assert.equal(r.status, 200);
+  assert.equal(r.body.events.taster.counts.confirmed, 2);
+  assert.equal(r.body.events.playday.bookings.length, 1);
+  assert.ok(!JSON.stringify(r.body).includes('cancelToken'));
+  const expired = B.adminToken(Date.now() - 15 * 86400000);
+  assert.equal((await get(admin, `/api/admin?key=${expired}`)).status, 401);
+});
+
+await test('CSV export has one row per child with all details', async () => {
+  const res = await get(admin, `/api/admin?event=taster&csv=1&key=${B.adminToken()}`);
   assert.equal(res.status, 200);
-  assert.ok(emailCalls().some((m) => /^PAID/.test(m.subject)));
+  assert.match(res.headers.get('content-type'), /text\/csv/);
+  const csv = await res.text();
+  const lines = csv.trim().split('\r\n');
+  assert.equal(lines.length, 3);
+  assert.match(lines[0], /Reference,Status,Waiting list position/);
+  assert.match(lines[1], /Peanuts/);
 });
 
-await test('webhook ignores unpaid sessions and other events', async () => {
-  await webhook.POST(signed(paidEvent({ payment_status: 'unpaid' })));
-  await webhook.POST(signed({ ...paidEvent(), type: 'payment_intent.created' }));
-  assert.equal(emailCalls().length, 0);
+await test('admin can cancel (place passes on) and mark Play Day as paid', async () => {
+  reset();
+  const key = B.adminToken();
+  const auth = { authorization: `Bearer ${key}` };
+  for (let i = 0; i < 20; i++) await book('taster', 1);
+  const w = (await book('taster', 1)).body;
+  const first = live('taster').bookings[0].ref;
+  const r = await out(await post(admin, '/api/admin', { action: 'cancel', ref: first }, auth));
+  assert.deepEqual(r.body.promoted, [w.ref]);
+  assert.equal((await post(admin, '/api/admin', { action: 'cancel', ref: first })).status, 401);
+  const pd = (await book('playday', 1)).body;
+  await post(admin, '/api/admin', { action: 'paid', ref: pd.ref }, auth);
+  assert.equal(live('playday').bookings[0].status, 'paid');
 });
 
-await test('webhook asks Stripe to retry if email is not configured', async () => {
-  delete process.env.RESEND_API_KEY;
-  const res = await webhook.POST(signed(paidEvent()));
-  assert.equal(res.status, 500);
-  process.env.RESEND_API_KEY = ENV.RESEND_API_KEY;
+await test('sign-in link is only emailed to the business inbox, at most once a minute', async () => {
+  reset();
+  await post(admin, '/api/admin', { action: 'link' });
+  await post(admin, '/api/admin', { action: 'link' });
+  assert.equal(sent.length, 1);
+  assert.deepEqual(sent[0].to, ['owner@playonactive.co.uk']);
+  const key = /admin\?key=([^"&]+)/.exec(sent[0].html)[1];
+  assert.ok(B.adminTokenValid(key));
 });
 
-await test('booking status returns a safe summary', async () => {
-  assert.equal((await status.GET(req('/api/booking-status?session_id=../../x'))).status, 400);
-  stripeSession = paidEvent().data.object;
-  const r = await (await status.GET(req('/api/booking-status?session_id=cs_test_abc1234567'))).json();
-  assert.equal(r.paid, true);
-  assert.equal(r.ref, 'SC-ABC234');
-  assert.deepEqual(r.children, ['Amara', 'Leo']);
-});
+console.log('Test area');
 
-await test('payment links mode: ready without a Stripe secret key', async () => {
-  delete process.env.STRIPE_SECRET_KEY;
-  const r = await (await book.GET(req('/api/book'))).json();
-  assert.equal(r.ready, true);
-  assert.equal(r.mode, 'links');
-  assert.deepEqual(r.options, { block: true, single: true });
-});
-
-await test('payment links: one child, block -> straight to the £35 link', async () => {
-  const res = await book.POST(req('/api/book', { method: 'POST', body: validBooking() }));
-  assert.equal(res.status, 200);
-  const r = await res.json();
-  assert.equal(r.mode, 'links');
-  assert.equal(r.payments.length, 1);
-  const u = new URL(r.payments[0].url);
-  assert.equal(u.origin + u.pathname, 'https://buy.stripe.com/fZubJ080d1yQ8EKfT43wQ07');
-  assert.equal(u.searchParams.get('prefilled_email'), 'parent@example.com');
-  assert.equal(u.searchParams.get('client_reference_id'), r.ref);
-  assert.equal(stripeCalls().length, 0);
-  assert.match(emailCalls()[0].text, /Expected payment\(s\): Amara – all four Saturdays: £35/);
-});
-
-await test('payment links: two children -> two payments with -1/-2 references', async () => {
-  const b = validBooking();
-  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
-  const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
-  assert.equal(r.payments.length, 2);
-  assert.equal(r.total, 7000);
-  assert.ok(r.payments[1].url.endsWith(`client_reference_id=${r.ref}-2`));
-  assert.match(r.payments[1].label, /^Leo/);
-});
-
-await test('payment links: adjustable quantity -> one payment, quantity 2', async () => {
-  process.env.STRIPE_LINKS_ADJUSTABLE = 'true';
-  const b = validBooking();
-  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
-  const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
-  assert.equal(r.payments.length, 1);
-  assert.equal(r.payments[0].quantity, 2);
-  assert.equal(r.payments[0].amount, 7000);
-  delete process.env.STRIPE_LINKS_ADJUSTABLE;
-});
-
-await test('payment links: £10 link has no quantity selector -> one payment per place', async () => {
-  const body = validBooking({ option: 'single', dates: ['2026-11-14', '2026-11-21'] });
-  body.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
-  const r = await (await book.POST(req('/api/book', { method: 'POST', body }))).json();
-  assert.equal(r.total, 4000);
-  assert.equal(r.payments.length, 4);
-  assert.ok(r.payments.every((p) => p.quantity === 1 && p.amount === 1000));
-  assert.ok(r.payments.every((p) => p.url.startsWith('https://buy.stripe.com/5kQbJ0bcpb9q6wCfT43wQ06?')));
-  assert.deepEqual(r.payments.map((p) => p.url.split('client_reference_id=')[1]), [1, 2, 3, 4].map((n) => `${r.ref}-${n}`));
-  assert.match(r.payments[0].label, /^Amara – Sat,? 14 Nov/);
-});
-
-await test('payment links: one Saturday, one child -> straight to the £10 link', async () => {
-  const r = await (await book.POST(req('/api/book', { method: 'POST', body: validBooking({ option: 'single', dates: ['2026-11-28'] }) }))).json();
-  assert.equal(r.payments.length, 1);
-  assert.equal(r.payments[0].quantity, 1);
-  assert.equal(r.payments[0].amount, 1000);
-});
-
-await test('payment links: block link is not adjustable -> one payment per child', async () => {
-  const b = validBooking();
-  b.children.push({ first: 'Leo', last: 'Test', dob: '2020-01-10', year: 'Year 1', school: 'Test Primary', send: 'No' });
-  const r = await (await book.POST(req('/api/book', { method: 'POST', body: b }))).json();
-  assert.equal(r.payments.length, 2);
-  assert.ok(r.payments.every((p) => p.amount === 3500 && p.url.includes('fZubJ080d1yQ8EKfT43wQ07')));
-  process.env.STRIPE_SECRET_KEY = ENV.STRIPE_SECRET_KEY;
-});
-
-await test('webhook: payment link session (no metadata) sends PAID email', async () => {
-  const ev = paidEvent({ metadata: {}, client_reference_id: 'SC-ABC234-2', amount_total: 3500, customer_details: { email: 'parent@example.com', name: 'Pat Parent' } });
-  const res = await webhook.POST(signed(ev));
-  assert.equal(res.status, 200);
-  const mails = emailCalls();
-  assert.match(mails[0].subject, /^PAID: Saturday Club booking SC-ABC234-2 – £35/);
-  assert.match(mails[1].text, /SC-ABC234-2/);
-  calls = [];
-  await webhook.POST(signed(paidEvent({ metadata: {}, client_reference_id: 'something-else' })));
-  assert.equal(emailCalls().length, 0);
-});
-
-await test('enquiry: honeypot is silently ignored', async () => {
-  const res = await enquiry.POST(req('/api/enquiry', { method: 'POST', body: { website: 'spam', name: 'x' } }));
-  assert.equal(res.status, 200);
-  assert.equal(emailCalls().length, 0);
-});
-
-await test('enquiry: general message is emailed with reply-to', async () => {
-  const res = await enquiry.POST(req('/api/enquiry', { method: 'POST', body: { kind: 'enquiry', name: 'Jo Bloggs', email: 'jo@example.com', programme: 'Saturday Club', message: 'Is there parking?', elapsed: 9000 } }));
-  assert.equal(res.status, 200);
-  const [m] = emailCalls();
-  assert.equal(m.reply_to, 'jo@example.com');
-  assert.match(m.subject, /Saturday Club/);
-});
-
-await test('camp interest: validates holidays and consent', async () => {
-  const bad = await enquiry.POST(req('/api/enquiry', { method: 'POST', body: { kind: 'camp-interest', name: 'Jo', email: 'jo@example.com', holidays: ['Christmas'], consent: true } }));
-  assert.equal(bad.status, 422);
-  const ok = await enquiry.POST(req('/api/enquiry', { method: 'POST', body: { kind: 'camp-interest', name: 'Jo', email: 'jo@example.com', holidays: ['February half-term', 'Easter holidays'], consent: true, children: 'Year 2 and Year 4' } }));
+await test('test bookings are kept apart from real ones and can only email test/business inboxes', async () => {
+  reset();
+  const r = await out(await post(signup, '/api/signup', { ...form('taster', 1), test: true }));
+  assert.equal(r.status, 422);
+  const ok = await out(await post(signup, '/api/signup', { ...form('taster', 1, { parent: { name: 'Test Parent', email: 'delivered+1@resend.dev', mobile: '07700900111' } }), test: true }));
   assert.equal(ok.status, 200);
-  assert.match(emailCalls()[0].text, /February half-term, Easter holidays/);
+  assert.equal(live('taster').bookings.length, 0);
+  assert.ok(sent.every((m) => m.to.every((t) => /@resend\.dev$/.test(t))));
+  assert.match(sent.find((m) => /TEST/.test(m.subject)).subject, /^\[TEST\]/);
+  const view = await out(await get(admin, '/api/admin?test=1'));
+  assert.equal(view.body.events.taster.bookings.length, 1);
+  await post(admin, '/api/admin', { action: 'reset', test: true });
+  assert.equal((await out(await get(admin, '/api/admin?test=1'))).body.events.taster.bookings.length, 0);
+  const realNow = Date.now;
+  Date.now = () => B.TEST_UNTIL + 1;
+  try {
+    assert.equal((await post(signup, '/api/signup', { ...form('taster', 1), test: true })).status, 403);
+  } finally { Date.now = realNow; }
 });
 
-Date.now = realNow;
 console.log(`\n${passed} tests passed`);

@@ -1,0 +1,151 @@
+<!--meta
+{"file": "taster.html", "nav": "taster", "body": "svc-saturday page-taster", "nofab": true,
+ "scripts": ["assets/js/taster.js"],
+ "title": "FREE Taster Day – Saturday 28 November | PlayOn Active",
+ "description": "A free day of multi-sports, active games and creative activities for School Years 1 to 5 at Southbury Primary School, Enfield. Saturday 28 November, 10am–2pm. Limited spaces."}
+-->
+<section class="thero">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> / Book your taster</p>
+    <p class="thero__badge">{{icon:sparkle}} Limited spaces</p>
+    <h1><span class="free">FREE</span> Taster Day &ndash; Saturday 28 November</h1>
+    <ul class="thero__facts">
+      <li>{{icon:pin}}<span>Southbury Primary School, Swansea Road, Enfield EN3 4JG</span></li>
+      <li>{{icon:clock}}<span>10am&ndash;2pm</span></li>
+      <li>{{icon:users}}<span>Open to all children in School Years 1 to 5</span></li>
+      <li>{{icon:star}}<span>Limited spaces</span></li>
+    </ul>
+    <p class="thero__lead">A fun day of multi-sports, active games and creative activities, run by qualified coaches, building confidence and physical literacy through play.</p>
+    <p class="thero__bring">{{icon:bag}}<span>Light snack provided. Please bring a packed lunch and a water bottle.</span></p>
+    <div class="thero__cta">
+      <button type="button" class="btn btn--primary btn--lg" data-pick="taster"><span data-pick-label="taster">Book free place</span> {{icon:arrow}}</button>
+      <a class="btn btn--light btn--lg" href="#play-day">Play Day &ndash; 5 Dec</a>
+    </div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <div class="notice notice--test" data-testmode hidden>{{icon:info}}<span><b>Test mode:</b> bookings made on this page go to a separate test list, not the real one.</span></div>
+
+    <div class="promo">
+      <div class="promo__icon">{{icon:star}}</div>
+      <p class="promo__main">Come to the Taster Day, complete our quick feedback survey, and get the Play Day on 5 December for just <b>&pound;5</b> (usually &pound;10).</p>
+    </div>
+    <p class="promo__note">{{icon:info}}<span><b>Taster families:</b> don't book the Play Day yet &ndash; your &pound;5 link will be sent after you complete the survey.</span></p>
+
+    <div class="bopts">
+      <article class="bopt bopt--taster" id="taster-day">
+        <p class="bopt__tag">Booking option 1</p>
+        <h2>FREE TASTER DAY</h2>
+        <ul class="bopt__facts">
+          <li>{{icon:calendar}} Saturday 28 November</li>
+          <li>{{icon:clock}} 10am&ndash;2pm</li>
+          <li>{{icon:users}} School Years 1 to 5</li>
+        </ul>
+        <p class="bopt__price">Free</p>
+        <button type="button" class="btn btn--primary btn--lg btn--block" data-pick="taster"><span data-pick-label="taster">Book free place</span> {{icon:arrow}}</button>
+        <p class="bopt__state" data-state="taster" hidden></p>
+      </article>
+
+      <article class="bopt bopt--play" id="play-day">
+        <p class="bopt__tag">Booking option 2</p>
+        <h2>PLAY DAY</h2>
+        <p class="bopt__lead">Can't make the taster? Book the Play Day directly.</p>
+        <ul class="bopt__facts">
+          <li>{{icon:calendar}} Saturday 5 December</li>
+          <li>{{icon:clock}} 10am&ndash;2pm</li>
+          <li>{{icon:users}} Open to all children in School Years 1 to 5</li>
+        </ul>
+        <p class="bopt__price">&pound;10 <small>per child</small></p>
+        <button type="button" class="btn btn--navy btn--lg btn--block" data-pick="playday"><span data-pick-label="playday">Book Play Day</span> {{icon:arrow}}</button>
+        <p class="bopt__state" data-state="playday" hidden></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="tform" id="book" data-form-wrap hidden>
+  <div class="wrap">
+    <div class="tform__card">
+      <form data-signup novalidate>
+        <div class="tform__head">
+          <p class="tform__eyebrow" data-f-eyebrow>Booking option 1 &middot; Free</p>
+          <h2 data-f-title>Book your free Taster Day place</h2>
+          <p class="tform__sub" data-f-sub>Saturday 28 November, 10am&ndash;2pm &middot; Southbury Primary School</p>
+          <button type="button" class="tform__switch" data-switch>Booking the Play Day instead?</button>
+        </div>
+        <div class="notice notice--warm" data-f-waitnote hidden>{{icon:info}}<span>The Taster Day is full right now. Join the waiting list: if a place comes up, it's given to the next family in line automatically and we'll email you.</span></div>
+        <div class="notice notice--warm" data-f-paynote hidden>{{icon:card}}<span>After this form you'll go to our secure Stripe page to pay &pound;10 per child.</span></div>
+        <div class="tform__errors" data-errors hidden tabindex="-1"></div>
+
+        <fieldset class="sub sub--first">
+          <legend>{{icon:users}} Parent or carer</legend>
+          <div class="fields">
+            <div class="field field--full"><label for="p_name">Full name<span class="req">*</span></label><input id="p_name" data-k="parent.name" type="text" autocomplete="name" required data-msg="Enter your full name." /></div>
+            <div class="field"><label for="p_email">Email<span class="req">*</span></label><input id="p_email" data-k="parent.email" type="email" autocomplete="email" inputmode="email" required data-msg="Enter a valid email address." /></div>
+            <div class="field"><label for="p_mobile">Mobile<span class="req">*</span></label><input id="p_mobile" data-k="parent.mobile" type="tel" autocomplete="tel" inputmode="tel" required data-type="phone" data-msg="Enter a valid mobile number." /></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub">
+          <legend>{{icon:smile}} <span data-kids-title>Your child</span></legend>
+          <div data-kids></div>
+          <button type="button" class="add-btn" data-add-kid>{{icon:plus}} Add a second child</button>
+        </fieldset>
+
+        <fieldset class="sub">
+          <legend>{{icon:shield}} Emergency contact &amp; collection</legend>
+          <div class="fields">
+            <div class="field"><label for="e_name">Emergency contact name<span class="req">*</span></label><input id="e_name" data-k="emergency.name" type="text" required data-msg="Enter an emergency contact name." /></div>
+            <div class="field"><label for="e_phone">Emergency contact number<span class="req">*</span></label><input id="e_phone" data-k="emergency.phone" type="tel" inputmode="tel" required data-type="phone" data-msg="Enter a valid emergency contact number." /></div>
+            <div class="field field--full"><label for="collectors">Adults authorised to collect the child<span class="req">*</span></label><textarea id="collectors" data-k="collectors" rows="2" required placeholder="Names and relationship, e.g. Jo Smith (mum), Sam Smith (uncle)" data-msg="Tell us which adults may collect your child."></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="sub">
+          <legend>{{icon:check}} Consent</legend>
+          <div class="fields">
+            <fieldset class="group" data-radio="consents.photo" data-msg="Choose Yes or No for photo consent.">
+              <legend>Photo consent<span class="req">*</span></legend>
+              <p class="hint consent-q">I consent to PlayOn Active taking photos/videos of my child for promotional use. No identifiable faces will be shown.</p>
+              <div class="opts">
+                <label class="opt-tile"><input type="radio" name="photo" value="Yes" data-k="consents.photo" /><span>Yes</span></label>
+                <label class="opt-tile"><input type="radio" name="photo" value="No" data-k="consents.photo" /><span>No</span></label>
+              </div>
+            </fieldset>
+            <label class="checkline"><input type="checkbox" data-k="consents.firstAid" required data-msg="Please give consent for first aid and emergency treatment." /><span>I consent to PlayOn Active staff giving my child first aid and, in an emergency, to my child receiving emergency medical treatment. We'll always contact you as soon as possible.<span class="req">*</span></span></label>
+            <label class="checkline"><input type="checkbox" data-k="consents.terms" required data-msg="Please agree to the terms & conditions and privacy notice." /><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">terms &amp; conditions</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a><span class="req">*</span></span></label>
+            <label class="checkline"><input type="checkbox" data-k="consents.marketing" /><span>Keep me updated about future PlayOn sessions and camps</span></label>
+          </div>
+        </fieldset>
+
+        <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" data-hp /></label></div>
+
+        <div class="form-msg form-msg--err" data-server-error hidden></div>
+        <button type="submit" class="btn btn--primary btn--lg btn--block tform__submit" data-submit><span data-submit-label>Book free place</span> {{icon:arrow}}</button>
+        <p class="hint tform__small" data-f-small>You'll get a confirmation email straight away.</p>
+      </form>
+      <div class="tdone" data-done hidden tabindex="-1"></div>
+    </div>
+  </div>
+</section>
+
+<template id="kid-tpl">
+  <div class="kid" data-kid>
+    <div class="kid__head">
+      <h3><span class="n" data-kid-n>1</span> <span data-kid-title>Child</span></h3>
+      <button type="button" class="link-btn" data-remove-kid hidden>{{icon:x}} Remove</button>
+    </div>
+    <div class="fields">
+      <div class="field field--full"><label for="c__N___name">Child's full name<span class="req">*</span></label><input id="c__N___name" data-c="name" type="text" required data-msg="Enter the child's full name." /></div>
+      <div class="field"><label for="c__N___year">School year<span class="req">*</span></label>
+        <select id="c__N___year" data-c="year" required data-msg="Choose the child's school year."><option value="">Please choose</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option></select></div>
+      <div class="field"><label for="c__N___school">School<span class="req">*</span></label><input id="c__N___school" data-c="school" type="text" required data-msg="Enter the child's school." /></div>
+      <div class="field field--full"><label for="c__N___medical">Medical conditions <span class="opt">(e.g. asthma, epilepsy, diabetes)</span></label><textarea id="c__N___medical" data-c="medical" rows="2" placeholder="Leave blank if none"></textarea></div>
+      <div class="field"><label for="c__N___allergies">Allergies</label><input id="c__N___allergies" data-c="allergies" type="text" placeholder="Leave blank if none" /></div>
+      <div class="field"><label for="c__N___medication">Medication</label><input id="c__N___medication" data-c="medication" type="text" placeholder="Leave blank if none" /></div>
+      <div class="field field--full"><label for="c__N___needs">Additional needs or anything else we should know</label><textarea id="c__N___needs" data-c="needs" rows="3" placeholder="e.g. SEND, what helps them settle, anything else"></textarea></div>
+    </div>
+  </div>
+</template>

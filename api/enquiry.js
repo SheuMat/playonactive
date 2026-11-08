@@ -4,7 +4,7 @@
 import { handle, json, readJson, str, isEmail, isPhone, HttpError } from './_lib/http.js';
 import { emailReady, sendEmail, businessInbox, layout, para, rowsHtml, rowsText } from './_lib/email.js';
 
-const PROGRAMMES = ['Saturday Club', 'After-School Clubs', 'Holiday Camps', 'Something else'];
+const PROGRAMMES = ['Taster Day / Play Day', 'After-School Clubs', 'Holiday Camps', 'Something else'];
 const HOLIDAYS = ['February half-term', 'Easter holidays', 'May half-term', 'Summer holidays'];
 
 export const GET = handle(async () => json({ ready: emailReady() }));

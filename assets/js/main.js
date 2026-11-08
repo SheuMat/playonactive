@@ -233,32 +233,6 @@
     });
   });
 
-  /* ---------- Booking confirmation page ---------- */
-  const confirmBox = $('[data-confirm]');
-  if (confirmBox) {
-    try { localStorage.removeItem('poa-booking'); sessionStorage.removeItem('poa-booking-health'); } catch (e) { /* ignore */ }
-    const id = new URLSearchParams(location.search).get('session_id');
-    if (id) {
-      fetch(`/api/booking-status?session_id=${encodeURIComponent(id)}`)
-        .then((r) => (r.ok ? r.json() : null))
-        .then((b) => {
-          if (!b) return;
-          const fmt = (d) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/London' });
-          $('[data-c-ref]').textContent = b.ref;
-          $('[data-c-dates]').textContent = b.dates.map(fmt).join(', ');
-          $('[data-c-kids]').textContent = b.children.join(', ');
-          $('[data-c-total]').textContent = '£' + (b.total / 100).toFixed(b.total % 100 ? 2 : 0);
-          $('[data-confirm-details]').hidden = false;
-          if (b.email) $('[data-confirm-lead]').textContent = `Your Saturday Club place is booked. We've emailed your confirmation to ${b.email}.`;
-          if (!b.paid) {
-            $('[data-confirm-title]').textContent = 'Your payment is being processed';
-            $('[data-confirm-lead]').textContent = 'We’ll email you as soon as your payment is confirmed.';
-          }
-        })
-        .catch(() => {});
-    }
-  }
-
   /* ---------- Footer year ---------- */
   $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 })();

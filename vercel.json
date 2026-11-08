@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/book-saturday-club", "destination": "/taster", "permanent": false },
+    { "source": "/book-saturday-club.html", "destination": "/taster", "permanent": false },
+    { "source": "/saturday-club", "destination": "/taster", "permanent": false },
+    { "source": "/saturday-club.html", "destination": "/taster", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -12,6 +18,14 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    },
+    {
+      "source": "/(admin|cancel)(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     }
   ]

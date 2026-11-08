@@ -1,0 +1,35 @@
+<!--meta
+{"file": "cancel.html", "nav": "taster", "body": "svc-saturday page-cancel", "nofab": true, "noindex": true,
+ "scripts": ["assets/js/cancel.js"],
+ "title": "Cancel your booking | PlayOn Active",
+ "description": "Cancel your PlayOn Active booking or leave the waiting list."}
+-->
+<section class="tform tform--solo">
+  <div class="wrap">
+    <div class="tform__card cbox" data-cancel>
+      <div data-c-loading><p class="hint">Finding your booking…</p></div>
+
+      <div data-c-ask hidden>
+        <h1 data-c-title>Cancel your booking?</h1>
+        <p class="lead" data-c-text></p>
+        <div class="form-msg form-msg--err" data-c-error hidden></div>
+        <div class="cbox__btns">
+          <button type="button" class="btn btn--navy btn--lg btn--block" data-c-go>Yes, cancel</button>
+          <a class="btn btn--ghost btn--lg btn--block" href="taster.html">No, keep it</a>
+        </div>
+      </div>
+
+      <div data-c-done hidden tabindex="-1">
+        <div class="tick">{{icon:check}}</div>
+        <h1 data-c-done-title>Booking cancelled</h1>
+        <p class="lead" data-c-done-text></p>
+        <div class="cbox__btns"><a class="btn btn--primary btn--lg btn--block" href="taster.html">Back to bookings</a></div>
+      </div>
+
+      <div data-c-missing hidden>
+        <h1>We couldn't find that booking</h1>
+        <p class="lead">Please use the link in your confirmation email. If it still doesn't work, email <a href="mailto:hello@playonactive.co.uk">hello@playonactive.co.uk</a> and we'll cancel it for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
