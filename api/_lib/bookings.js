@@ -21,7 +21,6 @@ export function namespace(testFlag, now = Date.now()) {
   return 'test';
 }
 export const keyFor = (ns, ev) => `poa:${ns}:${ev.key}`;
-export const adminInbox = (ns) => (ns === 'test' ? [TEST_SINK] : businessInbox());
 
 export function checkTestRecipient(ns, email) {
   if (ns !== 'test') return;
@@ -138,7 +137,15 @@ const dayRows = (ev, b) => [
 const BRING = 'Please bring a packed lunch and a water bottle. A light snack is provided.';
 const PROMO = 'After the Taster Day we’ll email you a quick feedback survey. Complete it and you can book the Play Day on Saturday 5 December for just £5 (usually £10). Please don’t book the Play Day yet: your £5 link will be sent after you complete the survey.';
 
+// Resend's test inboxes are only used by test bookings: those emails are skipped
+// (logged as sent) so a test run doesn't use up the daily sending allowance.
+const simulated = (to) => [].concat(to).every((t) => /@resend\.dev$/i.test(t));
+
 async function sendSafe(opts) {
+  if (simulated(opts.to)) {
+    console.log('Simulated test email:', opts.subject);
+    return true;
+  }
   try {
     await sendEmail({ replyTo: replyTo(), ...opts });
     return true;
@@ -209,11 +216,15 @@ export async function emailParent(kind, ev, b, links, ns) {
   return sendSafe({ to, ...msg, idempotencyKey: `${ns}-${b.ref}-${kind}-${b.updatedAt}` });
 }
 
-export async function emailAdmin({ ns, ev, subject, intro, booking, extraRows = [], adminLink, idem }) {
+const isBusiness = (b) => Boolean(b && businessInbox().includes(b.parent.email));
+
+// In the test area, admin alerts only really arrive when a test booking uses the business inbox.
+export async function emailAdmin({ ns, ev, subject, intro, booking, extraRows = [], adminLink, idem, involves = [] }) {
+  const to = ns !== 'test' || [booking, ...involves].some(isBusiness) ? businessInbox() : [TEST_SINK];
   const rows = [...extraRows, ...(booking ? [{ heading: 'Booking' }, { label: 'Reference', value: booking.ref }, { label: 'Status', value: booking.status.replace('_', ' ') }, ...detailRows(booking)] : [])];
   const html = layout(subject.replace(/^\[TEST\] /, ''), para(intro) + (adminLink ? button(adminLink, 'View all bookings', '#18306C', '#ffffff') : '') + rowsHtml(rows));
   return sendSafe({
-    to: adminInbox(ns),
+    to,
     replyTo: booking ? booking.parent.email : undefined,
     subject: (ns === 'test' ? '[TEST] ' : '') + subject,
     html,
@@ -261,6 +272,7 @@ export async function cancelBooking({ ns, ev, ref, token, by, base, now = Date.n
     extraRows: r.promoted.map((p) => ({ label: 'Place given to', value: `${childNames(p)} – ${p.parent.name}, ${p.parent.email}, ${p.parent.mobile} (${p.ref})` })),
     adminLink: adminUrl(base, ns),
     idem: `${b.ref}-admin-cancel`,
+    involves: r.promoted,
   }));
   const [parentSent] = await Promise.all(sends);
   return { booking: b, promoted: r.promoted, parentSent };

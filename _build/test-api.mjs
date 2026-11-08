@@ -334,10 +334,15 @@ await test('test bookings are kept apart from real ones and can only email test/
   const ok = await out(await post(signup, '/api/signup', { ...form('taster', 1, { parent: { name: 'Test Parent', email: 'delivered+1@resend.dev', mobile: '07700900111' } }), test: true }));
   assert.equal(ok.status, 200);
   assert.equal(live('taster').bookings.length, 0);
-  assert.ok(sent.every((m) => m.to.every((t) => /@resend\.dev$/.test(t))));
+  assert.equal(sent.length, 0, 'emails to resend.dev test inboxes are simulated, not sent');
+  // a test booking under the business inbox gets real emails, including a [TEST] admin alert
+  const biz = await out(await post(signup, '/api/signup', { ...form('taster', 1, { parent: { name: 'Owner Test', email: 'owner@playonactive.co.uk', mobile: '07700900112' } }), test: true }));
+  assert.equal(biz.status, 200);
+  assert.equal(sent.length, 2);
+  assert.ok(sent.every((m) => m.to.includes('owner@playonactive.co.uk')));
   assert.match(sent.find((m) => /TEST/.test(m.subject)).subject, /^\[TEST\]/);
   const view = await out(await get(admin, '/api/admin?test=1'));
-  assert.equal(view.body.events.taster.bookings.length, 1);
+  assert.equal(view.body.events.taster.bookings.length, 2);
   await post(admin, '/api/admin', { action: 'reset', test: true });
   assert.equal((await out(await get(admin, '/api/admin?test=1'))).body.events.taster.bookings.length, 0);
   const realNow = Date.now;
